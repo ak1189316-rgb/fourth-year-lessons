@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محاكاة الشخصيات التاريخية - مركز المستكشف الرقمي</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    * { font-family: 'Cairo', sans-serif; box-sizing: border-box; }
+    body { background-color: #F4F7FB; margin: 0; padding: 0; min-height: 100vh; }
+    .figma-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); }
+    .figma-card:hover { transform: translateY(-5px); box-shadow: 0 20px 35px -10px rgba(124, 58, 237, 0.15); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-purple-600 selection:text-white"><nav aria-label="التنقل بين الصفحات" style="position:relative;z-index:1000;background:#0f172a;color:#fff;padding:10px 16px;font-family:Cairo,sans-serif"><div style="max-width:1200px;margin:auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px"><a style="color:white;padding:7px 11px;text-decoration:none;border-radius:9px;background:#334155" href="index.html">الرئيسية</a><a style="color:white;padding:7px 11px;text-decoration:none" href="geography.html">الجغرافيا</a><a style="color:white;padding:7px 11px;text-decoration:none" href="history.html">التاريخ</a><a style="color:white;padding:7px 11px;text-decoration:none" href="maps.html">الخرائط</a><a style="color:white;padding:7px 11px;text-decoration:none" href="characters.html">الشخصيات</a><a style="color:white;padding:7px 11px;text-decoration:none" href="explorer.html">المستكشف</a><details style="position:relative"><summary style="cursor:pointer;padding:7px 11px;border-radius:9px;background:#334155">الدروس المتاحة</summary><div style="position:absolute;top:36px;right:0;min-width:230px;background:white;color:#0f172a;padding:8px;border-radius:10px;box-shadow:0 8px 24px #0003;display:grid;gap:4px"><a style="padding:6px;color:#0f172a;text-decoration:none" href="geography-lesson-1.html">قارات العالم</a><a style="padding:6px;color:#0f172a;text-decoration:none" href="geography-lesson-2.html">الحضارات في الأمريكتين</a><a style="padding:6px;color:#0f172a;text-decoration:none" href="geography-lesson-3.html">الكشوف الجغرافية</a><a style="padding:6px;color:#0f172a;text-decoration:none" href="history-lesson-1.html">تولية محمد علي</a><a style="padding:6px;color:#0f172a;text-decoration:none" href="history-lesson-2.html">بناء الدولة الحديثة</a><a style="padding:6px;color:#0f172a;text-decoration:none" href="history-lesson-3.html">عصر خلفاء محمد علي</a></div></details></div></nav>
+
+  <!-- ==================== الترويسة والشعارات المعتمدة ==================== -->
+  <header class="w-full bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm sticky top-0 z-40">
+    <!-- السطر العلوي لاسم المنصة -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-1 flex justify-start">
+      <span class="text-[11px] text-slate-500 font-bold">مركز المستكشف الرقمي</span>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
+      
+      <!-- اليمين: اللوجو المعتمد لمركز تعلم الدراسات الاجتماعية / جامعة أسوان -->
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="flex flex-col items-center shrink-0">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center shrink-0">
+            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-2xs">
+              <circle cx="56" cy="46" r="34" fill="#F59E0B" opacity="0.95" />
+              <path d="M 56 6 L 61 14 L 70 8 L 72 18 L 82 15 L 81 25 L 90 25 L 86 35 L 94 38 L 87 47 L 94 52 L 85 58 L 89 68 L 79 70 L 80 80 L 70 78 L 67 87 L 58 82 L 53 90 L 47 82" fill="none" stroke="#D97706" stroke-width="2.5" />
+              <circle cx="44" cy="52" r="32" fill="#2563EB" stroke="#1D4ED8" stroke-width="2" />
+              <ellipse cx="44" cy="52" rx="32" ry="12" fill="none" stroke="#FFFFFF" stroke-width="1.8" opacity="0.85" />
+              <line x1="12" y1="52" x2="76" y2="52" stroke="#FFFFFF" stroke-width="2" opacity="0.9" />
+              <ellipse cx="44" cy="52" rx="14" ry="32" fill="none" stroke="#FFFFFF" stroke-width="1.8" opacity="0.85" />
+              <line x1="44" y1="20" x2="44" y2="84" stroke="#FFFFFF" stroke-width="2" opacity="0.9" />
+              <g transform="translate(42, 42)">
+                <polygon points="0,-18 26,-7 0,4 -26,-7" fill="#0F172A" stroke="#334155" stroke-width="1.5" />
+                <path d="M -13,-4 L -13,7 C -13,14 13,14 13,7 L 13,-4 Z" fill="#1E293B" />
+                <circle cx="0" cy="-7" r="2.8" fill="#F59E0B" />
+                <path d="M 0,-7 Q -18,-5 -22,12" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" />
+                <polygon points="-24,12 -20,12 -19,20 -25,20" fill="#F59E0B" />
+              </g>
+              <g transform="translate(44, 76)">
+                <path d="M -16,-3 Q 0,-7 0,2 Q 0,-7 16,-3 L 16,8 Q 0,4 0,12 Q 0,4 -16,8 Z" fill="#FFFFFF" stroke="#0F172A" stroke-width="1.2" />
+                <line x1="0" y1="2" x2="0" y2="12" stroke="#0F172A" stroke-width="1.2" />
+              </g>
+            </svg>
+          </div>
+          <span class="text-[8.5px] font-black text-slate-800 leading-tight mt-0.5 tracking-tighter">
+            مركز تعلم الدراسات الاجتماعية
+          </span>
+        </div>
+      </div>
+
+      <!-- المركز: اسم القسم والعنوان الفرعي -->
+      <div class="text-center flex-1 px-1 sm:px-2">
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+          محاكاة الشخصيات التاريخية
+        </h1>
+        <p class="text-purple-600 font-bold text-xs sm:text-sm mt-0.5">
+          تقنيات الذكاء الاصطناعي والتفاعل - الصف الثالث الإعدادي
+        </p>
+      </div>
+
+      <!-- الشمال: زر الصفحة الرئيسية -->
+      <div class="flex items-center gap-2 shrink-0">
+        <a href="index.html" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-100 hover:bg-purple-50 text-slate-800 hover:text-purple-700 font-black text-xs sm:text-sm transition-all shadow-2xs border border-slate-200/80">
+          <span>الرئيسية</span>
+          <span class="text-sm sm:text-base">🏠</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== المحتوى الرئيسي ==================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
+
+    <!-- البانر الترحيبي المميز (طراز المنصة الأصلي) -->
+    <section class="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-r from-[#0F172A] via-[#1E1B4B] to-[#312E81] text-white shadow-2xl p-6 sm:p-10 flex flex-col-reverse md:flex-row items-center justify-between gap-6 border border-indigo-900/40">
+      <div class="absolute -left-20 -top-20 w-64 h-64 bg-purple-500 opacity-15 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="flex-1 text-center md:text-right space-y-3 z-10 max-w-2xl">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-xs font-bold text-purple-200">
+          <span>🤖 فيديوهات الذكاء الاصطناعي التفاعلية</span>
+        </div>
+        <h2 class="text-2xl sm:text-4xl font-black text-white leading-tight">
+          شاهد واستمع إلى حكام وشخصيات تاريخية تتحدث عن أنفسهم!
+        </h2>
+        <p class="text-indigo-100/90 text-xs sm:text-base leading-relaxed font-semibold">
+          تجربة تعليمية مبتكرة تجمع بين التاريخ وتقنيات التوليد الرقمي الذكي لمساعدة طلاب الصف الثالث الإعدادي على استيعاب الأحداث والشخصيات التاريخية بطريقة مرئية ممتعة.
+        </p>
+      </div>
+
+      <div class="relative z-10 shrink-0 w-28 h-28 sm:w-36 sm:h-36 bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 flex items-center justify-center text-5xl sm:text-6xl shadow-xl">
+        🤖
+      </div>
+    </section>
+
+    <!-- شريط التصفية حسَب العصور التاريخية -->
+    <div class="flex items-center justify-between flex-wrap gap-4 bg-white p-3 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-black text-slate-700">تصفية حسب العصر:</span>
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs font-bold">
+          <button onclick="filterEra('all')" id="filter-all" class="filter-btn px-3.5 py-1.5 rounded-xl bg-purple-600 text-white shadow-xs">الكل</button>
+          <button onclick="filterEra('modern')" id="filter-modern" class="filter-btn px-3.5 py-1.5 rounded-xl text-slate-600 hover:bg-slate-100">تاريخ مصر الحديث</button>
+          <button onclick="filterEra('ottoman')" id="filter-ottoman" class="filter-btn px-3.5 py-1.5 rounded-xl text-slate-600 hover:bg-slate-100">العصر العثماني والمماليك</button>
+        </div>
+      </div>
+      <span class="text-xs font-bold text-slate-400">إجمالي الشخصيات: 3 شخصيات</span>
+    </div>
+
+    <!-- شبكة بطاقات الشخصيات (Grid) -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- شخصية 1: محمد علي باشا -->
+      <div class="card-item modern bg-white rounded-[2rem] border border-slate-100 figma-card overflow-hidden flex flex-col justify-between p-6">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-purple-50 text-purple-700 border border-purple-100">ذكاء اصطناعي</span>
+            <span class="text-2xl">👑</span>
+          </div>
+
+          <div class="relative w-full h-44 rounded-2xl overflow-hidden bg-slate-900 group cursor-pointer" onclick="openVideoModal('محمد علي باشا', 'مؤسس مصر الحديثة يروي قصة بناء الجيش والتعليم والتنظيم الإداري.', 'https://www.youtube.com/embed/3Zyx_UoyBoc')">
+            <img src="https://img.youtube.com/vi/3Zyx_UoyBoc/hqdefault.jpg" alt="محمد علي باشا" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-80" />
+            <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-colors">
+              <div class="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center text-xl shadow-lg group-hover:scale-110 transition-transform">▶</div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-extrabold text-slate-900">محمد علي باشا</h3>
+            <p class="text-xs font-bold text-purple-600 mt-0.5">مؤسس مصر الحديثة (1805 - 1848م)</p>
+            <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+              يتحدث عن توليه الحكم بناءً على إرادة الشعب المصري، وكيف قام ببناء الجيش والدولة الحديثة وتطوير الزراعة والصناعة.
+            </p>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 mt-4 flex items-center justify-between">
+          <button onclick="openVideoModal('محمد علي باشا', 'مؤسس مصر الحديثة يروي قصة بناء الجيش والتعليم والتنظيم الإداري.', 'https://www.youtube.com/embed/3Zyx_UoyBoc')" class="flex items-center gap-2 text-xs font-extrabold text-purple-700 hover:text-purple-900">
+            <span>مشاهدة فيديو الذكاء الاصطناعي</span>
+            <span class="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center text-xs">←</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- شخصية 2: السلطان سليم الأول -->
+      <div class="card-item ottoman bg-white rounded-[2rem] border border-slate-100 figma-card overflow-hidden flex flex-col justify-between p-6">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-purple-50 text-purple-700 border border-purple-100">ذكاء اصطناعي</span>
+            <span class="text-2xl">🕌</span>
+          </div>
+
+          <div class="relative w-full h-44 rounded-2xl overflow-hidden bg-slate-900 group cursor-pointer" onclick="openVideoModal('السلطان سليم الأول', 'معركتا مرج دابق والريدانية وتحول مصر لولاية عثمانية.', 'https://www.youtube.com/embed/6GFgMp6uIro')">
+            <img src="https://img.youtube.com/vi/6GFgMp6uIro/hqdefault.jpg" alt="السلطان سليم الأول" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-80" />
+            <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-colors">
+              <div class="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center text-xl shadow-lg group-hover:scale-110 transition-transform">▶</div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-extrabold text-slate-900">السلطان سليم الأول</h3>
+            <p class="text-xs font-bold text-purple-600 mt-0.5">التوسع العثماني في الشرق (1517م)</p>
+            <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+              يشرح أسباب اتجاهه بنفوذه نحو الشرق، وموقعة مرج دابق والريدانية وانتهاء دولة المماليك وتحول مصر لولاية عثمانية.
+            </p>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 mt-4 flex items-center justify-between">
+          <button onclick="openVideoModal('السلطان سليم الأول', 'معركتا مرج دابق والريدانية وتحول مصر لولاية عثمانية.', 'https://www.youtube.com/embed/6GFgMp6uIro')" class="flex items-center gap-2 text-xs font-extrabold text-purple-700 hover:text-purple-900">
+            <span>مشاهدة فيديو الذكاء الاصطناعي</span>
+            <span class="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center text-xs">←</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- شخصية 3: نابليون بونابرت -->
+      <div class="card-item modern bg-white rounded-[2rem] border border-slate-100 figma-card overflow-hidden flex flex-col justify-between p-6">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="px-3 py-1 rounded-full text-xs font-extrabold bg-purple-50 text-purple-700 border border-purple-100">ذكاء اصطناعي</span>
+            <span class="text-2xl">⚔️</span>
+          </div>
+
+          <div class="relative w-full h-44 rounded-2xl overflow-hidden bg-slate-900 group cursor-pointer" onclick="openVideoModal('نابليون بونابرت', 'قائد الحملة الفرنسية على مصر وأهدافها ونتائجها.', 'https://www.youtube.com/embed/QJ3EIl0bIFQ')">
+            <img src="https://img.youtube.com/vi/QJ3EIl0bIFQ/hqdefault.jpg" alt="نابليون بونابرت" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-80" />
+            <div class="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-colors">
+              <div class="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center text-xl shadow-lg group-hover:scale-110 transition-transform">▶</div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-extrabold text-slate-900">نابليون بونابرت</h3>
+            <p class="text-xs font-bold text-purple-600 mt-0.5">قائد الحملة الفرنسية على مصر (1798م)</p>
+            <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+              يتحدث عن دوافع الحملة الفرنسية على مصر، ومعركة إمبابة، وتأسيس المجمع العلمي، ونتائج الحملة على مصر.
+            </p>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 mt-4 flex items-center justify-between">
+          <button onclick="openVideoModal('نابليون بونابرت', 'قائد الحملة الفرنسية على مصر وأهدافها ونتائجها.', 'https://www.youtube.com/embed/QJ3EIl0bIFQ')" class="flex items-center gap-2 text-xs font-extrabold text-purple-700 hover:text-purple-900">
+            <span>مشاهدة فيديو الذكاء الاصطناعي</span>
+            <span class="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center text-xs">←</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==================== النافذة المنبثقة لمشغل الفيديو (Video Modal) ==================== -->
+  <div id="videoModal" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white rounded-[2rem] border border-slate-200 shadow-2xl w-full max-w-3xl overflow-hidden space-y-0">
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
+        <div>
+          <h4 id="modalTitle" class="font-extrabold text-base"></h4>
+          <p id="modalSub" class="text-xs text-slate-400"></p>
+        </div>
+        <button onclick="closeVideoModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center font-bold text-sm">✕</button>
+      </div>
+
+      <div class="relative w-full aspect-video bg-black">
+        <iframe id="modalIframe" class="w-full h-full" src="" title="مشغل الفيديو" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
+      <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-600">
+        <span>🤖 تم إنشاء هذا المقطع باستخدام تقنيات الذكاء الاصطناعي لخدمة طلاب الدراسات الاجتماعية</span>
+        <button onclick="closeVideoModal()" class="px-4 py-2 rounded-xl bg-purple-600 text-white font-bold hover:bg-purple-700 transition-colors">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== الفوتر ==================== -->
+  <footer class="bg-white border-t border-slate-200 mt-12 py-8 text-center text-xs font-semibold text-slate-500 space-y-1">
+    <p class="font-extrabold text-slate-800 text-sm">مركز تعلم الدراسات الاجتماعية · الصف الثالث الإعدادي</p>
+    <p class="text-xs text-slate-500">تصميم وإعداد: طلاب الفرقة الرابعة - قسم تكنولوجيا التعليم | جامعة أسوان</p>
+    <p class="text-[11px] text-slate-400">جميع الحقوق محفوظة © مركز المستكشف الرقمي</p>
+  </footer>
+
+  <!-- ==================== السكريبتات والتصفية ==================== -->
+  <script>
+    function filterEra(era) {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.className = 'filter-btn px-3.5 py-1.5 rounded-xl text-slate-600 hover:bg-slate-100';
+      });
+
+      const activeBtn = document.getElementById('filter-' + era);
+      if (activeBtn) {
+        activeBtn.className = 'filter-btn px-3.5 py-1.5 rounded-xl bg-purple-600 text-white shadow-xs';
+      }
+
+      const cards = document.querySelectorAll('.card-item');
+      cards.forEach(card => {
+        if (era === 'all' || card.classList.contains(era)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function openVideoModal(title, sub, videoUrl) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalSub').innerText = sub;
+      document.getElementById('modalIframe').src = videoUrl;
+      document.getElementById('videoModal').classList.remove('hidden');
+    }
+
+    function closeVideoModal() {
+      document.getElementById('modalIframe').src = '';
+      document.getElementById('videoModal').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>

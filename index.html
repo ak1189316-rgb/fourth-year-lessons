@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+	<head>
+		<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>الرئيسية | مركز المستكشف الرقمي</title>
+				<link rel="preconnect" href="https://fonts.googleapis.com">
+					<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+						<script src="https://cdn.tailwindcss.com"></script>
+						<style>
+							* { font-family: 'Cairo', sans-serif; box-sizing: border-box; }
+							body { background-color: #F4F7FE; margin: 0; padding: 0; min-height: 100vh; overflow-x: hidden; }
+							.figma-card { transition: all 0.3s ease; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); }
+							.figma-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px -10px rgba(79,70,229,0.15); border-color: #E0E7FF; }
+							.hero-gradient { background: linear-gradient(105deg, #1E1B4B 0%, #4338CA 100%); }
+							.video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 1.5rem; }
+							.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+						</style>
+					</head>
+
+	<body class="text-slate-800"><nav aria-label="التنقل بين الصفحات" style="position:relative;z-index:1000;background:#0f172a;color:#fff;padding:10px 16px;font-family:Cairo,sans-serif"><div style="max-width:1200px;margin:auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px"><a style="color:white;padding:7px 11px;text-decoration:none;border-radius:9px;background:#334155" href="index.html">الرئيسية</a><a style="color:white;padding:7px 11px;text-decoration:none" href="geography.html">الجغرافيا</a><a style="color:white;padding:7px 11px;text-decoration:none" href="history.html">التاريخ</a><a style="color:white;padding:7px 11px;text-decoration:none" href="maps.html">الخرائط</a><a style="color:white;padding:7px 11px;text-decoration:none" href="characters.html">الشخصيات</a><a style="color:white;padding:7px 11px;text-decoration:none" href="explorer.html">المستكشف</a><details style="position:relative"><summary style="cursor:pointer;padding:7px 11px;border-radius:9px;background:#334155">الدروس المتاحة</summary><div style="position:absolute;top:36px;right:0;min-width:230px;background:white;color:#0f172a;padding:8px;border-radius:10px;box-shadow:0 8px 24px #0003;display:grid;gap:4px"><a style="padding:6px;color:#0f172a;text-decoration:none" href="geography-lesson-1.html">قارات العالم</a><a style="padding:6px;color:#0f172a;text-decoration:none" href="geography-lesson-2.html">الحضارات في الأمريكتين</a><a style="padding:6px;color:#0f172a;text-decoration:none" href="geography-lesson-3.html">الكشوف الجغرافية</a><a style="padding:6px;color:#0f172a;text-decoration:none" href="history-lesson-1.html">تولية محمد علي</a><a style="padding:6px;color:#0f172a;text-decoration:none" href="history-lesson-2.html">بناء الدولة الحديثة</a><a style="padding:6px;color:#0f172a;text-decoration:none" href="history-lesson-3.html">عصر خلفاء محمد علي</a></div></details></div></nav>
+
+		<!-- Header Section -->
+		<header class="bg-white/90 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
+			<div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+				<!-- شعار جامعة أسوان / كلية التربية النوعية -->
+				<img src="https://upload.wikimedia.org/wikipedia/ar/f/f7/%D8%AC%D8%A7%D9%85%D8%B9%D8%A9_%D8%A3%D8%B3%D9%88%D8%A7%D9%86.png?utm_source=ar.wikipedia.org&utm_campaign=index&utm_content=original" alt="شعار جامعة أسوان" class="w-12 h-12 md:w-14 md:h-14 object-contain">
+
+					<div class="text-center flex-1">
+						<h1 class="text-base md:text-xl font-extrabold text-slate-900">مركز المستكشف الرقمي</h1>
+						<p class="text-xs md:text-sm text-indigo-500 font-semibold mt-0.5">الصف الثالث الإعدادي</p>
+					</div>
+
+					<!-- شعار قسم تكنولوجيا التعليم / كلية التربية النوعية -->
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEzagK-_Zmqbzw25mmC78SZwqlNOLOK24tSfODSl1WydvvBxkharGt-Mmz&s=10" alt="شعار كلية التربية النوعية وقسم تكنولوجيا التعليم" class="w-12 h-12 md:w-14 md:h-14 object-contain">
+    </div>
+		</header>
+
+		<main class="max-w-7xl mx-auto px-4 py-8 md:py-12">
+
+			<!-- Hero Banner with Integrated Center Logo -->
+			<section class="hero-gradient rounded-[2.5rem] text-white p-8 md:p-12 mb-10 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl">
+				<div class="absolute -left-20 -top-20 w-64 h-64 bg-white opacity-5 rounded-full blur-2xl"></div>
+				<div class="absolute right-0 bottom-0 w-40 h-40 bg-indigo-500 opacity-20 rounded-full blur-2xl"></div>
+
+				<!-- Text & CTA -->
+				<div class="relative z-10 max-w-xl text-center md:text-right">
+					<span class="inline-block bg-white/20 backdrop-blur-sm text-indigo-50 font-bold px-4 py-1.5 rounded-full text-xs mb-5">🚀 منصة تعليمية تفاعلية</span>
+					<h2 class="text-3xl md:text-5xl font-extrabold leading-relaxed md:leading-[1.6] mb-6">
+						اكتشف العالم من حولك<br>بطريقة مبتكرة!
+    </h2>
+					<p class="text-indigo-100 text-sm md:text-base leading-relaxed mb-8">تعلم الجغرافيا والتاريخ بطريقة ممتعة، شاهد الشروحات، واستكشف الخرائط، ثم اختبر معلوماتك من خلال الأنشطة التفاعلية المصممة خصيصاً لك.</p>
+					<button onclick="scrollToLessons()" class="inline-block bg-white text-indigo-900 font-bold rounded-2xl px-8 py-4 hover:bg-indigo-50 transition-all duration-300 shadow-xl transform hover:-translate-y-1 cursor-pointer">
+						ابدأ التعلم الآن ←
+					</button>
+				</div>
+
+				<!-- Center Logo Display (Transparent & Modern Glassmorphism Style) -->
+				<div class="relative z-10 flex-shrink-0 flex items-center justify-center p-2">
+					<div class="relative group">
+						<!-- هالة إضاءة خلف الشعار -->
+						<div class="absolute -inset-2 bg-gradient-to-r from-indigo-300 to-purple-400 rounded-full blur-xl opacity-30 group-hover:opacity-60 transition duration-500"></div>
+
+						<!-- إطار زجاجي دائري -->
+						<div class="relative flex items-center justify-center w-48 h-48 md:w-56 md:h-56 bg-white/10 backdrop-blur-md rounded-full border border-white/20 p-6 shadow-2xl transition-all duration-500 hover:scale-105">
+							<img src="https://i.postimg.cc/0jsKwhSc/321.png" alt="شعار مركز تعلم الدراسات الاجتماعية" class="w-full h-full object-contain filter drop-shadow-[0_10px_15px_rgba(0,0,0,0.3)]">
+    </div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Welcome Video Section (YouTube Embed) -->
+			<section class="mb-12 bg-white rounded-[2.5rem] p-6 md:p-8 border border-slate-100 figma-card">
+				<div class="flex items-center gap-3 mb-6">
+					<div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold">🎬</div>
+					<div>
+						<h2 class="text-xl md:text-2xl font-extrabold text-slate-900">فيديو ترحيبي بالمنصة</h2>
+						<p class="text-slate-500 text-xs md:text-sm font-medium">شاهد المقدمة للتعرف على طريقة استخدام المركز التعليمي</p>
+					</div>
+				</div>
+
+				<!-- Video Container -->
+				<div class="video-container shadow-md border border-slate-100">
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/kYnOOp-iqOA?si=bA6gvI3JYzKgaLKK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+				</div>
+
+			</section>
+
+			<!-- Educational Tracks Section (2 Categories: Geography & History) -->
+			<section id="lessons" class="mb-12">
+				<div class="flex items-center justify-between mb-8">
+					<div>
+						<h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">المسارات التعليمية</h2>
+						<p class="text-slate-500 mt-2 font-medium">اختر قسم الدراسة وابدأ رحلتك التعليمية</p>
+					</div>
+				</div>
+
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+					<!-- Track 1: Geography -->
+					<a href="geography.html" rel="noopener noreferrer" class="block bg-white rounded-[2rem] p-8 border border-slate-100 figma-card relative overflow-hidden group">
+						<div class="flex items-center justify-between mb-6">
+							<span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-4 py-1.5 rounded-full">قسم الجغرافيا</span>
+							<div class="w-14 h-14 rounded-2xl bg-indigo-50 text-3xl flex items-center justify-center">🌍</div>
+						</div>
+						<h3 class="font-extrabold text-2xl text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">قارات العالم</h3>
+						<p class="text-sm text-slate-500 leading-relaxed mb-6">تعرف على القارات ومواقعها الجغرافية والتضاريس والمناخ من خلال الخرائط والشروحات التفاعلية.</p>
+						<div class="flex justify-between items-center pt-5 border-t border-slate-50">
+							<span class="text-sm font-bold text-slate-900 group-hover:text-indigo-600">دخول قسم الجغرافيا</span>
+							<span class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-indigo-600 group-hover:text-white transition-all text-lg">←</span>
+						</div>
+					</a>
+
+					<!-- Track 2: History -->
+					<a href="history.html" rel="noopener noreferrer" class="block bg-white rounded-[2rem] p-8 border border-slate-100 figma-card relative overflow-hidden group">
+						<div class="flex items-center justify-between mb-6">
+							<span class="bg-amber-100 text-amber-700 text-xs font-bold px-4 py-1.5 rounded-full">قسم التاريخ</span>
+							<div class="w-14 h-14 rounded-2xl bg-amber-50 text-3xl flex items-center justify-center">🏺</div>
+						</div>
+						<h3 class="font-extrabold text-2xl text-slate-900 mb-3 group-hover:text-amber-600 transition-colors">دراسات تاريخية</h3>
+						<p class="text-sm text-slate-500 leading-relaxed mb-6">استكشف الأحداث التاريخية الهامة والشخصيات المؤثرة والخطوط الزمنية التي شكلت التاريخ.</p>
+						<div class="flex justify-between items-center pt-5 border-t border-slate-50">
+							<span class="text-sm font-bold text-slate-900 group-hover:text-amber-600">دخول قسم التاريخ</span>
+							<span class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-amber-600 group-hover:text-white transition-all text-lg">←</span>
+						</div>
+					</a>
+				</div>
+			</section>
+
+			<!-- AI & Interactive Tools Section -->
+			<section class="mb-12">
+				<div class="flex items-center justify-between mb-8">
+					<div>
+						<h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">تقنيات التعلم بالذكاء الاصطناعي والتفاعل</h2>
+						<p class="text-slate-500 mt-2 font-medium">تجربة تعليمية مبتكرة تجمع بين الخرائط الذكية ومحاكاة الشخصيات التاريخية</p>
+					</div>
+				</div>
+
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+					<!-- Tab 1: Interactive Maps -->
+					<a href="maps.html" rel="noopener noreferrer" class="block bg-white rounded-[2rem] p-8 border border-slate-100 figma-card relative overflow-hidden group">
+						<div class="flex items-center justify-between mb-6">
+							<span class="bg-teal-100 text-teal-700 text-xs font-bold px-4 py-1.5 rounded-full">خرائط تفاعلية</span>
+							<div class="w-14 h-14 rounded-2xl bg-teal-50 text-3xl flex items-center justify-center">🗺️</div>
+						</div>
+						<h3 class="font-extrabold text-2xl text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">الخرائط الجغرافية الذكية</h3>
+						<p class="text-sm text-slate-500 leading-relaxed mb-6">استكشف الخرائط الرقمية والتفاعلية لمعرفة مواقع القارات والتضاريس والدول بطريقة مرئية ممتعة.</p>
+						<div class="flex justify-between items-center pt-5 border-t border-slate-50">
+							<span class="text-sm font-bold text-slate-900 group-hover:text-teal-600">استكشف الخرائط التفاعلية</span>
+							<span class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-teal-600 group-hover:text-white transition-all text-lg">←</span>
+						</div>
+					</a>
+
+					<!-- Tab 2: AI Historical Characters -->
+					<a href="characters.html" rel="noopener noreferrer" class="block bg-white rounded-[2rem] p-8 border border-slate-100 figma-card relative overflow-hidden group">
+						<div class="flex items-center justify-between mb-6">
+							<span class="bg-purple-100 text-purple-700 text-xs font-bold px-4 py-1.5 rounded-full">ذكاء اصطناعي</span>
+							<div class="w-14 h-14 rounded-2xl bg-purple-50 text-3xl flex items-center justify-center">🤖</div>
+						</div>
+						<h3 class="font-extrabold text-2xl text-slate-900 mb-3 group-hover:text-purple-600 transition-colors">محاكاة الشخصيات التاريخية</h3>
+						<p class="text-sm text-slate-500 leading-relaxed mb-6">شاهد واستمع إلى حكام وشخصيات تاريخية يتحدثون عن أنفسهم وأهم الأحداث عبر مقاطع فيديو مصممة بالذكاء الاصطناعي.</p>
+						<div class="flex justify-between items-center pt-5 border-t border-slate-50">
+							<span class="text-sm font-bold text-slate-900 group-hover:text-purple-600">مشاهدة فيديوهات الذكاء الاصطناعي</span>
+							<span class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-purple-600 group-hover:text-white transition-all text-lg">←</span>
+						</div>
+					</a>
+				</div>
+			</section>
+
+			<!-- Study Tip Section -->
+			<section class="bg-white border border-slate-100 rounded-[2rem] p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 figma-card">
+				<div class="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center text-3xl shadow-inner shrink-0">💡</div>
+				<div class="text-center md:text-right flex-1">
+					<h3 class="font-extrabold text-lg text-slate-900">نصيحة للمذاكرة</h3>
+					<p class="text-slate-500 mt-2 font-medium text-sm">شاهد الفيديو التعليمي الترحيبي أولاً، ثم اختر المسار المطلوب، وأخيراً اختبر فهمك لضمان ثبات المعلومة.</p>
+				</div>
+			</section>
+
+		</main>
+
+		<!-- Footer Section -->
+		<footer class="text-slate-400 text-center py-8 px-4 border-t border-slate-200 mt-10 bg-white">
+			<p class="text-sm font-bold">تصميم وإعداد: طلاب الفرقة الرابعة - قسم تكنولوجيا التعليم | جامعة أسوان</p>
+		</footer>
+
+		<script>
+			// Smooth scroll function to prevent Google Sites iframe jump glitch
+			function scrollToLessons() {
+			const section = document.getElementById('lessons');
+			if (section) {
+			section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}
+			}
+		</script>
+	</body>
+</html>
