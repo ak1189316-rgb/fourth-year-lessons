@@ -59,9 +59,9 @@
         id: 'unit1', color: 'purple', label: 'الوحدة الأولى',
         title: 'مصر تحت الحكم العثماني والصراع الاستعماري',
         lessons: [
-          { icon: '⚔️', label: 'الدرس الأول', title: 'تولية محمد علي حكم مصر', desc: 'دور الزعامة الشعبية بقيادة عمر مكرم في اختيار محمد علي واليًا على مصر عام 1805م، وتثبيت حكمه والتخلص من المماليك.', link: 'index.html' },
-          { icon: '⛵', label: 'الدرس الثاني', title: 'محمد علي وبناء الدولة الحديثة', desc: 'التنظيم الإداري والسياسة الاقتصادية والعسكرية والتعليمية لبناء مصر الحديثة.', link: 'index.html' },
-          { icon: '👑', label: 'الدرس الثالث', title: 'مصر في عصر خلفاء محمد علي', desc: 'حكم عباس الأول وسعيد وإسماعيل وتوفيق، وحفر قناة السويس وازدياد التدخل الأجنبي في شؤون مصر.', link: 'index.html' }
+          { icon: '⚔️', label: 'الدرس الأول', title: 'تولية محمد علي حكم مصر', desc: 'دور الزعامة الشعبية بقيادة عمر مكرم في اختيار محمد علي واليًا على مصر عام 1805م، وتثبيت حكمه والتخلص من المماليك.', link: 'history-lesson-1.html' },
+          { icon: '⛵', label: 'الدرس الثاني', title: 'محمد علي وبناء الدولة الحديثة', desc: 'التنظيم الإداري والسياسة الاقتصادية والعسكرية والتعليمية لبناء مصر الحديثة.', link: 'history-lesson-2.html' },
+          { icon: '👑', label: 'الدرس الثالث', title: 'مصر في عصر خلفاء محمد علي', desc: 'حكم عباس الأول وسعيد وإسماعيل وتوفيق، وحفر قناة السويس وازدياد التدخل الأجنبي في شؤون مصر.', link: 'history-lesson-3.html' }
         ]
       },
       {
@@ -147,7 +147,7 @@
     document.querySelectorAll('.lesson-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const url = UNITS[btn.dataset.unit].lessons[btn.dataset.lesson].link;
-        if (url) window.open(url, '_blank', 'noopener,noreferrer');
+        if (url) window.location.href = url;
         else showToast('رابط الدرس هيتضاف قريبًا 📚');
       });
     });
