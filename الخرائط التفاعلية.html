@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>قسم الجغرافيا - مركز المستكشف الرقمي</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/topojson-client@3"></script>
+
+  <style>
+    body { font-family: 'Cairo', sans-serif; background-color: #F4F7FB; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .climate-zone-path {
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      transition: fill-opacity 0.2s ease, stroke-width 0.2s ease, filter 0.2s ease;
+    }
+    .climate-zone-path:hover {
+      filter: brightness(1.25);
+      stroke: #FFFFFF !important;
+      stroke-width: 2.5px !important;
+    }
+    .country-path { transition: fill 0.15s, stroke 0.15s; }
+    @media (max-width: 768px) {
+      #mapWrapper { min-height: 70vh !important; height: 72vh !important; }
+      #realWorldSvg { height: 100% !important; width: 100% !important; max-height: 100% !important; touch-action: none; }
+      #country-popover { display: none !important; }
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- ==================== الهيدر والشعارات مطابق للصورة تماماً ==================== -->
+  <header class="w-full bg-white border-b border-slate-100 shadow-sm sticky top-0 z-40">
+    <!-- السطر العلوي لاسم الموقع الإلكتروني -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-1 flex justify-start">
+      <span class="text-[11px] text-slate-600 font-bold">مركز المستكشف الرقمي</span>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
+      
+      <!-- اليمين: اللوجو المعتمد لمركز تعلم الدراسات الاجتماعية -->
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="flex flex-col items-center shrink-0">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 relative flex items-center justify-center shrink-0">
+            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-2xs">
+              <circle cx="56" cy="46" r="34" fill="#F59E0B" opacity="0.95" />
+              <path d="M 56 6 L 61 14 L 70 8 L 72 18 L 82 15 L 81 25 L 90 25 L 86 35 L 94 38 L 87 47 L 94 52 L 85 58 L 89 68 L 79 70 L 80 80 L 70 78 L 67 87 L 58 82 L 53 90 L 47 82" fill="none" stroke="#D97706" stroke-width="2.5" />
+              <circle cx="44" cy="52" r="32" fill="#2563EB" stroke="#1D4ED8" stroke-width="2" />
+              <ellipse cx="44" cy="52" rx="32" ry="12" fill="none" stroke="#FFFFFF" stroke-width="1.8" opacity="0.85" />
+              <line x1="12" y1="52" x2="76" y2="52" stroke="#FFFFFF" stroke-width="2" opacity="0.9" />
+              <ellipse cx="44" cy="52" rx="14" ry="32" fill="none" stroke="#FFFFFF" stroke-width="1.8" opacity="0.85" />
+              <line x1="44" y1="20" x2="44" y2="84" stroke="#FFFFFF" stroke-width="2" opacity="0.9" />
+              <g transform="translate(42, 42)">
+                <polygon points="0,-18 26,-7 0,4 -26,-7" fill="#0F172A" stroke="#334155" stroke-width="1.5" />
+                <path d="M -13,-4 L -13,7 C -13,14 13,14 13,7 L 13,-4 Z" fill="#1E293B" />
+                <circle cx="0" cy="-7" r="2.8" fill="#F59E0B" />
+                <path d="M 0,-7 Q -18,-5 -22,12" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" />
+                <polygon points="-24,12 -20,12 -19,20 -25,20" fill="#F59E0B" />
+              </g>
+              <g transform="translate(44, 76)">
+                <path d="M -16,-3 Q 0,-7 0,2 Q 0,-7 16,-3 L 16,8 Q 0,4 0,12 Q 0,4 -16,8 Z" fill="#FFFFFF" stroke="#0F172A" stroke-width="1.2" />
+                <line x1="0" y1="2" x2="0" y2="12" stroke="#0F172A" stroke-width="1.2" />
+              </g>
+            </svg>
+          </div>
+          <span class="text-[8.5px] font-black text-slate-800 leading-tight mt-0.5 tracking-tighter">
+            مركز تعلم الدراسات الاجتماعية
+          </span>
+        </div>
+      </div>
+
+      <!-- المركز: قسم الجغرافيا وعنوان المنصة مطابق للصورة -->
+      <div class="text-center flex-1 px-1 sm:px-2">
+        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+          قسم الجغرافيا
+        </h1>
+        <p class="text-[#4F46E5] font-bold text-xs sm:text-sm mt-0.5">
+          مركز المستكشف الرقمي - الصف الثالث الإعدادي
+        </p>
+      </div>
+
+      <!-- الشمال: زر الرئيسية مطابق للصورة -->
+      <div class="flex items-center gap-2 shrink-0">
+        <a href="https://sites.google.com/view/test4thc/%D8%A7%D9%84%D8%B5%D9%81%D8%AD%D8%A9-%D8%A7%D9%84%D8%B1%D8%A6%D9%8A%D8%B3%D9%8A%D8%A9" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-xs sm:text-sm transition-all shadow-2xs border border-slate-200/80">
+          <span class="text-sm sm:text-base">🏠</span>
+          <span>الرئيسية</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- شريط التنقل الرئيسي -->
+    <div class="bg-slate-50 border-t border-slate-200/70 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto flex items-center justify-between py-2 overflow-x-auto no-scrollbar gap-2 sm:gap-4">
+        <nav class="flex items-center gap-2 shrink-0 text-xs sm:text-sm font-bold">
+          <button onclick="switchTab('blank')" id="nav-blank" class="nav-tab px-3 py-1.5 rounded-lg bg-blue-600 text-white shadow-xs">
+            🗺️ الخريطة الصماء
+          </button>
+          <button onclick="switchTab('mountains')" id="nav-mountains" class="nav-tab px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition-colors">
+            ⛰️ الجبال والهضاب
+          </button>
+          <button onclick="switchTab('waters')" id="nav-waters" class="nav-tab px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition-colors">
+            🌊 الأنهار والمضايق
+          </button>
+          <button onclick="switchTab('climates')" id="nav-climates" class="nav-tab px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition-colors">
+            🌦️ الأقاليم المناخية
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== المحتوى الرئيسي ==================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+
+    <!-- البانر الترحيبي -->
+    <section class="relative overflow-hidden rounded-[24px] bg-gradient-to-r from-[#1c194e] via-[#272368] to-[#1c194e] text-white shadow-xl p-6 sm:p-8 flex flex-col-reverse lg:flex-row items-center justify-between gap-6 border border-indigo-900/40">
+      <div class="w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-gradient-to-b from-[#2e2a77] via-[#211e59] to-[#16143f] border-2 border-indigo-400/30 shadow-2xl flex flex-col items-center justify-center p-2 text-center shrink-0">
+        <div class="w-12 h-12 rounded-full bg-blue-600/30 border border-blue-400/60 flex items-center justify-center shadow-inner mb-1 text-xl">
+          🌍
+        </div>
+        <p class="text-[11px] font-bold text-slate-100 leading-snug">مركز المستكشف الرقمي</p>
+        <p class="text-[9px] font-semibold text-blue-300 mt-0.5">جامعة أسوان</p>
+      </div>
+
+      <div class="flex-1 text-center lg:text-right space-y-2 max-w-2xl">
+        <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-white/10 border border-white/15 text-xs font-semibold text-indigo-100">
+          <span>🚀 خريطة جغرافية ومناخية كارتوغرافية ذكية</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-black text-white leading-tight">
+          استكشف العالم وتوزع الأقاليم بمستشعرات واقعية!
+        </h2>
+        <p class="text-indigo-100/90 text-xs sm:text-sm leading-relaxed">
+          تنقل بين <strong>الخريطة الصماء</strong>، <strong>الجبال والهضاب</strong>، <strong>الأنهار والمضايق</strong>، و<strong>الأقاليم المناخية الـ 9</strong> بمستشعراتها الجغرافية التفاعلية مع دعم التكبير والتحريك والربط المباشر مع Google Maps و Earth.
+        </p>
+      </div>
+    </section>
+
+    <!-- ==================== مساحة الخريطة التفاعلية ==================== -->
+    <section id="map-section" class="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden space-y-0">
+      
+      <!-- شريط التحكم بالأقسام والقارات -->
+      <div class="bg-slate-900 text-white p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-slate-300">القسم:</span>
+          <div class="flex items-center gap-1.5 bg-slate-800 p-1 rounded-xl border border-slate-700 text-xs font-extrabold">
+            <button onclick="switchTab('blank')" id="tab-blank" class="tab-btn px-3 py-1.5 rounded-lg bg-blue-600 text-white shadow-xs">
+              🗺️ الخريطة الصماء
+            </button>
+            <button onclick="switchTab('mountains')" id="tab-mountains" class="tab-btn px-3 py-1.5 rounded-lg text-slate-300 hover:text-white">
+              ⛰️ الجبال والهضاب
+            </button>
+            <button onclick="switchTab('waters')" id="tab-waters" class="tab-btn px-3 py-1.5 rounded-lg text-slate-300 hover:text-white">
+              🌊 الأنهار والمضايق
+            </button>
+            <button onclick="switchTab('climates')" id="tab-climates" class="tab-btn px-3 py-1.5 rounded-lg text-slate-300 hover:text-white">
+              🌦️ الأقاليم المناخية
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1 overflow-x-auto no-scrollbar">
+          <button onclick="setContinent('all')" id="btn-all" class="cont-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-white/20 text-white">🌍 العالم</button>
+          <button onclick="setContinent('asia')" id="btn-asia" class="cont-btn px-2 py-1 rounded-lg text-xs font-bold bg-white/5 text-slate-300 hover:bg-white/20">آسيا</button>
+          <button onclick="setContinent('africa')" id="btn-africa" class="cont-btn px-2 py-1 rounded-lg text-xs font-bold bg-white/5 text-slate-300 hover:bg-white/20">أفريقيا</button>
+          <button onclick="setContinent('europe')" id="btn-europe" class="cont-btn px-2 py-1 rounded-lg text-xs font-bold bg-white/5 text-slate-300 hover:bg-white/20">أوروبا</button>
+          <button onclick="setContinent('north_america')" id="btn-north_america" class="cont-btn px-2 py-1 rounded-lg text-xs font-bold bg-white/5 text-slate-300 hover:bg-white/20">أمريكا ش</button>
+          <button onclick="setContinent('south_america')" id="btn-south_america" class="cont-btn px-2 py-1 rounded-lg text-xs font-bold bg-white/5 text-slate-300 hover:bg-white/20">أمريكا ج</button>
+          <button onclick="setContinent('australia')" id="btn-australia" class="cont-btn px-2 py-1 rounded-lg text-xs font-bold bg-white/5 text-slate-300 hover:bg-white/20">أستراليا</button>
+        </div>
+      </div>
+
+      <!-- أشرطة معالم الجبال والهضاب -->
+      <div id="mountains-toolbar" class="hidden bg-amber-50/80 border-b border-amber-200/80 p-3 overflow-x-auto no-scrollbar">
+        <div class="flex items-center gap-1.5 text-xs font-bold min-w-max">
+          <span class="text-amber-950 font-extrabold ml-1">⛰️ اختر معلماً:</span>
+          <button onclick="focusOnFeature('himalayas')" class="px-2.5 py-1 rounded-lg bg-red-600 text-white hover:bg-red-700">جبال الهيمالايا</button>
+          <button onclick="focusOnFeature('alps')" class="px-2.5 py-1 rounded-lg bg-red-600 text-white hover:bg-red-700">جبال الألب</button>
+          <button onclick="focusOnFeature('andes')" class="px-2.5 py-1 rounded-lg bg-red-600 text-white hover:bg-red-700">جبال الأنديز</button>
+          <button onclick="focusOnFeature('rockies')" class="px-2.5 py-1 rounded-lg bg-red-600 text-white hover:bg-red-700">جبال الروكي</button>
+          <button onclick="focusOnFeature('atlas')" class="px-2.5 py-1 rounded-lg bg-red-600 text-white hover:bg-red-700">جبال أطلس</button>
+          <button onclick="focusOnFeature('great_dividing')" class="px-2.5 py-1 rounded-lg bg-red-600 text-white hover:bg-red-700">جبال الحاجز الكبير</button>
+          <span class="text-slate-300 mx-1">|</span>
+          <button onclick="focusOnFeature('tibet')" class="px-2.5 py-1 rounded-lg bg-amber-600 text-white hover:bg-amber-700">هضبة التبت</button>
+          <button onclick="focusOnFeature('deccan')" class="px-2.5 py-1 rounded-lg bg-amber-600 text-white hover:bg-amber-700">هضبة الدكن</button>
+          <button onclick="focusOnFeature('ethiopia_plat')" class="px-2.5 py-1 rounded-lg bg-amber-600 text-white hover:bg-amber-700">هضبة إثيوبيا</button>
+          <button onclick="focusOnFeature('meseta')" class="px-2.5 py-1 rounded-lg bg-amber-600 text-white hover:bg-amber-700">هضبة الميزيتا</button>
+          <button onclick="focusOnFeature('brazil_plat')" class="px-2.5 py-1 rounded-lg bg-amber-600 text-white hover:bg-amber-700">هضبة البرازيل</button>
+          <button onclick="focusOnFeature('western_plat')" class="px-2.5 py-1 rounded-lg bg-amber-600 text-white hover:bg-amber-700">الهضبة الغربية بأستراليا</button>
+        </div>
+      </div>
+
+      <!-- أشرطة معالم الأنهار والمضايق -->
+      <div id="waters-toolbar" class="hidden bg-sky-50/80 border-b border-sky-200 p-3 overflow-x-auto no-scrollbar">
+        <div class="flex items-center gap-1.5 text-xs font-bold min-w-max">
+          <span class="text-sky-950 font-extrabold ml-1">🌊 اختر نهراً أو مضيقاً:</span>
+          <button onclick="focusOnFeature('nile')" class="px-2.5 py-1 rounded-lg bg-sky-600 text-white hover:bg-sky-700">نهر النيل</button>
+          <button onclick="focusOnFeature('amazon')" class="px-2.5 py-1 rounded-lg bg-sky-600 text-white hover:bg-sky-700">نهر الأمازون</button>
+          <button onclick="focusOnFeature('mississippi')" class="px-2.5 py-1 rounded-lg bg-sky-600 text-white hover:bg-sky-700">نهر الميسيسيبي</button>
+          <button onclick="focusOnFeature('volga')" class="px-2.5 py-1 rounded-lg bg-sky-600 text-white hover:bg-sky-700">نهر الفولجا</button>
+          <button onclick="focusOnFeature('murray_darling')" class="px-2.5 py-1 rounded-lg bg-sky-600 text-white hover:bg-sky-700">نهرا مري ودارلنج</button>
+          <span class="text-slate-300 mx-1">|</span>
+          <button onclick="focusOnFeature('gibraltar')" class="px-2.5 py-1 rounded-lg bg-purple-600 text-white hover:bg-purple-700">مضيق جبل طارق</button>
+          <button onclick="focusOnFeature('bab_el_mandeb')" class="px-2.5 py-1 rounded-lg bg-purple-600 text-white hover:bg-purple-700">مضيق باب المندب</button>
+          <button onclick="focusOnFeature('bering')" class="px-2.5 py-1 rounded-lg bg-purple-600 text-white hover:bg-purple-700">مضيق بيرنغ</button>
+        </div>
+      </div>
+
+      <!-- حاوية الخريطة -->
+      <div id="mapWrapper" class="relative bg-[#E8F4F8] min-h-[480px] sm:min-h-[580px] flex items-center justify-center p-4 overflow-hidden select-none">
+        
+        <!-- أزرار التكبير والتصغير وملء الشاشة -->
+        <div class="absolute top-4 left-4 z-30 flex flex-col gap-1.5 bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-slate-200">
+          <button onclick="zoomIn()" title="تكبير (+)" class="w-9 h-9 flex items-center justify-center rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-black text-lg border border-slate-200 shadow-2xs">
+            +
+          </button>
+          <button onclick="zoomOut()" title="تصغير (-)" class="w-9 h-9 flex items-center justify-center rounded-xl bg-white hover:bg-slate-100 text-slate-800 font-black text-lg border border-slate-200 shadow-2xs">
+            −
+          </button>
+          <button onclick="resetZoom()" title="إعادة ضبط الرؤية" class="w-9 h-9 flex items-center justify-center rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200 shadow-2xs">
+            🔄
+          </button>
+          <button onclick="toggleFullscreen()" id="btn-fullscreen" title="ملء الشاشة" class="w-9 h-9 flex items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs">
+            ⛶
+          </button>
+        </div>
+
+        <!-- أزرار تفعيل خطوط الطول ودوائر العرض -->
+        <div class="absolute top-4 right-4 z-30 flex flex-col sm:flex-row items-end sm:items-center gap-1.5 bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-slate-200">
+          <button onclick="toggleLongitudes()" id="btn-toggle-longitudes" title="تفعيل / إخفاء خطوط الطول (Meridians)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-200">
+            <span class="text-sm">🌐</span>
+            <span>خطوط الطول</span>
+            <span id="lon-indicator" class="w-2 h-2 rounded-full bg-slate-300 transition-colors"></span>
+          </button>
+
+          <button onclick="toggleLatitudes()" id="btn-toggle-latitudes" title="تفعيل / إخفاء دوائر العرض (Parallels)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-200">
+            <span class="text-sm">🧭</span>
+            <span>دوائر العرض</span>
+            <span id="lat-indicator" class="w-2 h-2 rounded-full bg-slate-300 transition-colors"></span>
+          </button>
+        </div>
+
+        <svg id="realWorldSvg" viewBox="0 0 1000 520" class="w-full h-auto max-h-[620px] transition-all duration-300 ease-out cursor-grab active:cursor-grabbing">
+          <g id="zoomable-map-group">
+            <!-- طبقة مسارات دول العالم -->
+            <g id="earth-countries-layer"></g>
+
+            <!-- طبقة مستشعرات الأقاليم المناخية الـ 9 -->
+            <g id="climates-overlay" style="display: none;"></g>
+
+            <!-- مسارات الأنهار الكبرى الدقيقة -->
+            <g id="rivers-layer" opacity="0.95" style="display: none;" class="pointer-events-none"></g>
+
+            <!-- طبقة خطوط الطول -->
+            <g id="longitudes-layer" style="display: none;" class="pointer-events-none"></g>
+
+            <!-- طبقة دوائر العرض -->
+            <g id="latitudes-layer" style="display: none;" class="pointer-events-none"></g>
+
+            <!-- أسماء المحيطات فوق القارات والأقاليم مع تحديد أبيض لحمايتها من التلاشي -->
+            <g id="ocean-labels-layer" class="pointer-events-none select-none">
+              <text x="120" y="260" text-anchor="middle" fill="#0369A1" stroke="#FFFFFF" stroke-width="3" paint-order="stroke fill" opacity="0.85" font-size="13" font-weight="900" letter-spacing="2">المحيط الهادي</text>
+              <text x="910" y="300" text-anchor="middle" fill="#0369A1" stroke="#FFFFFF" stroke-width="3" paint-order="stroke fill" opacity="0.85" font-size="13" font-weight="900" letter-spacing="2">المحيط الهادي</text>
+              <text x="410" y="235" text-anchor="middle" fill="#0369A1" stroke="#FFFFFF" stroke-width="3" paint-order="stroke fill" opacity="0.85" font-size="14" font-weight="900" letter-spacing="2">المحيط الأطلنطي</text>
+              <text x="670" y="340" text-anchor="middle" fill="#0369A1" stroke="#FFFFFF" stroke-width="3" paint-order="stroke fill" opacity="0.85" font-size="14" font-weight="900" letter-spacing="2">المحيط الهندي</text>
+              <text x="500" y="55" text-anchor="middle" fill="#0369A1" stroke="#FFFFFF" stroke-width="3.5" paint-order="stroke fill" opacity="0.95" font-size="13.5" font-weight="900" letter-spacing="2">المحيط القطبي الشمالي</text>
+              <text x="500" y="490" text-anchor="middle" fill="#0369A1" stroke="#FFFFFF" stroke-width="3" paint-order="stroke fill" opacity="0.85" font-size="12" font-weight="900" letter-spacing="2">المحيط المتجمد الجنوبي</text>
+            </g>
+
+            <!-- النقاط التفاعلية -->
+            <g id="interactive-pins-layer"></g>
+          </g>
+        </svg>
+
+        <!-- نافذة اسم الدولة وعلمها (للكمبيوتر فقط وتختفي بالموبايل) -->
+        <div id="country-popover" class="hidden absolute z-30 pointer-events-none w-72 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 shadow-2xl border border-blue-500/30 text-right">
+          <div class="flex items-center gap-2.5 mb-2 pb-2 border-b border-slate-100">
+            <img id="pop-flag-img" src="" alt="علم" class="w-10 h-7 object-cover rounded shadow-xs border border-slate-200 shrink-0" onerror="this.style.display='none'; document.getElementById('pop-flag-fallback').classList.remove('hidden');" />
+            <span id="pop-flag-fallback" class="hidden text-2xl">🌐</span>
+            <div class="flex-1 min-w-0">
+              <h4 id="pop-name" class="text-xs font-black text-slate-900 truncate"></h4>
+              <div class="flex items-center gap-1.5 text-[10px] font-bold text-blue-600 mt-0.5">
+                <span id="pop-continent"></span>
+                <span>·</span>
+                <span id="pop-capital"></span>
+              </div>
+            </div>
+          </div>
+          <p id="pop-brief" class="text-[11px] font-semibold text-slate-600 leading-snug mb-2"></p>
+          <div class="pt-1 border-t border-slate-100 text-[10px] text-blue-600 font-extrabold">
+            <span>اضغط لفتح Google Maps أو Earth ↗</span>
+          </div>
+        </div>
+
+        <!-- تلميح مستشعر الإقليم المناخي -->
+        <div id="climate-tooltip" class="hidden absolute z-30 pointer-events-none max-w-sm bg-slate-900/95 backdrop-blur-md text-white rounded-xl p-3 shadow-xl border border-white/20 text-right">
+          <div class="flex items-center gap-2 mb-1">
+            <span id="clim-dot" class="w-3 h-3 rounded-full shrink-0"></span>
+            <h5 id="clim-title" class="text-xs font-black text-white"></h5>
+          </div>
+          <p id="clim-desc" class="text-[11px] font-medium text-slate-200 leading-relaxed"></p>
+        </div>
+
+      </div>
+
+      <!-- ================= مفتاح مستشعرات الأقاليم المناخية الـ 9 ================= -->
+      <div id="climates-legend-bar" class="hidden bg-emerald-50/70 border-t border-emerald-200/80 px-4 sm:px-6 py-3.5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+          <h4 class="text-xs font-black text-emerald-950 flex items-center gap-1.5">
+            <span>🌦️</span> <span>مستشعرات ألوان الأقاليم المناخية المقررة (اضغط على أي إقليم لعزله واكتشافه):</span>
+          </h4>
+          <button id="btn-clear-climate" onclick="clearSelectedClimate()" class="hidden text-[11px] text-blue-700 font-bold bg-white px-2.5 py-0.5 rounded-md border border-blue-300 hover:bg-blue-50 transition-colors">
+            إعادة إظهار جميع الأقاليم ✕
+          </button>
+        </div>
+        <div id="climates-buttons-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 text-[11px] font-bold"></div>
+      </div>
+
+      <!-- ================= شريط الإرشادات والمفتاح ================= -->
+      <div class="bg-slate-50 border-t border-slate-200 px-6 py-3 flex flex-wrap items-center justify-between gap-4 text-xs font-semibold text-slate-700">
+        <div id="general-legend" class="flex flex-wrap items-center gap-4">
+          <span class="text-slate-900 font-extrabold flex items-center gap-1">🧭 مفتاح المعالم:</span>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#DC2626] border-2 border-white shadow-xs"></span><span class="font-bold text-red-950">جبال شاهقة</span></div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#D97706] border-2 border-white shadow-xs"></span><span class="font-bold text-amber-950">هضاب كبرى</span></div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#0284C7] border-2 border-white shadow-xs"></span><span class="font-bold text-sky-950">أنهار وسهول</span></div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#7C3AED] border-2 border-white shadow-xs"></span><span class="font-bold text-purple-950">مضايق استراتيجية</span></div>
+        </div>
+
+        <div class="text-blue-800 font-bold bg-blue-100/70 px-3 py-1.5 rounded-xl border border-blue-200 text-xs flex items-center gap-1.5">
+          <span>💡</span> <span>اضغط على أي دولة أو إقليم بالخريطة لتكبير حدودها والتفاصيل المنهجية الكاملة</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== بطاقة تفاصيل الدولة وخرائط جوجل ==================== -->
+    <div id="country-detail-card" class="hidden bg-white rounded-[24px] border-2 border-blue-600 shadow-xl p-5 sm:p-8 space-y-4">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b pb-4">
+        <div class="flex items-center gap-4">
+          <img id="card-flag-img" src="" alt="علم" class="w-16 h-11 object-cover rounded-lg shadow border border-slate-200" />
+          <div>
+            <div class="flex items-center gap-2 mb-0.5">
+              <span id="card-continent-badge" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-blue-100 text-blue-700"></span>
+              <span id="card-capital-text" class="text-xs font-bold text-slate-500"></span>
+            </div>
+            <h3 id="card-country-name" class="text-2xl font-black text-slate-900 tracking-tight"></h3>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <a id="btn-google-maps" href="#" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-colors">
+            <span>🗺️ فتح في Google Maps</span>
+          </a>
+          <a id="btn-google-earth" href="#" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-colors">
+            <span>🌍 عرض ثلاثي الأبعاد في Google Earth</span>
+          </a>
+          <button onclick="closeCountryCard()" class="text-xs font-bold text-slate-400 hover:text-slate-700 px-2.5 py-2 rounded-xl hover:bg-slate-100">
+            إغلاق ✕
+          </button>
+        </div>
+      </div>
+
+      <p id="card-country-desc" class="text-sm font-semibold text-slate-700 leading-relaxed"></p>
+    </div>
+
+    <!-- ==================== بطاقة استكشاف الإقليم المناخي المفصلة ==================== -->
+    <div id="climate-detail-card" class="hidden bg-white rounded-[24px] border-2 border-emerald-500 shadow-md p-6 sm:p-8 space-y-5">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+        <div class="flex items-center gap-3">
+          <span id="card-clim-dot" class="w-5 h-5 rounded-lg shadow-sm shrink-0"></span>
+          <div>
+            <div class="flex items-center gap-2 mb-0.5">
+              <span id="card-clim-group" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800"></span>
+              <span id="card-clim-lat" class="text-xs font-bold text-slate-500"></span>
+            </div>
+            <h3 id="card-clim-name" class="text-2xl font-black text-slate-900 tracking-tight"></h3>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="clearSelectedClimate()" class="text-xs font-bold px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 transition-colors">
+            عرض جميع الأقاليم ✕
+          </button>
+          <button onclick="readClimateAloud()" class="text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 flex items-center gap-1.5 transition-colors">
+            <span>🔊 استمع للشرح</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-medium">
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+          <span class="font-black text-slate-900 block flex items-center gap-1.5 text-sm">
+            <span>🌍</span> <span>التوزيع الجغرافي بالقارات:</span>
+          </span>
+          <p id="card-clim-locations" class="text-slate-600 leading-relaxed font-semibold"></p>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-amber-50/50 border border-amber-100 space-y-1.5">
+          <span class="font-black text-amber-950 block flex items-center gap-1.5 text-sm">
+            <span>☀️</span> <span>الخصائص المناخية (الحرارة والمطر):</span>
+          </span>
+          <p class="text-slate-700 leading-relaxed font-semibold">
+            <strong>الحرارة:</strong> <span id="card-clim-temp"></span>
+          </p>
+          <p class="text-slate-700 leading-relaxed font-semibold">
+            <strong>الأمطار:</strong> <span id="card-clim-rain"></span>
+          </p>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-emerald-50/50 border border-emerald-100 space-y-1.5">
+          <span class="font-black text-emerald-950 block flex items-center gap-1.5 text-sm">
+            <span>🌿</span> <span>النبات الطبيعي والحيوانات:</span>
+          </span>
+          <p class="text-slate-700 leading-relaxed font-semibold">
+            <strong>النبات والأشجار:</strong> <span id="card-clim-flora"></span>
+          </p>
+          <p class="text-slate-700 leading-relaxed font-semibold">
+            <strong>الحيوانات:</strong> <span id="card-clim-fauna"></span>
+          </p>
+        </div>
+      </div>
+
+      <div class="p-3.5 rounded-2xl bg-blue-50/80 border border-blue-200/90 flex items-start gap-3 text-xs font-bold text-blue-950">
+        <span class="text-base">💡</span>
+        <div>
+          <span class="font-black text-blue-900 block mb-0.5">ملاحظة امتحانية وتوجيه للمذاكرة:</span>
+          <span id="card-clim-exam" class="font-semibold text-blue-900/90 leading-relaxed"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- بطاقة تفاصيل المعلم الجغرافي المحدد -->
+    <div id="feature-detail-card" class="hidden bg-white rounded-[24px] border-2 border-amber-500 shadow-md p-6 sm:p-8 space-y-4">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b pb-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span id="feat-cat-badge" class="px-3 py-0.5 rounded-full text-xs font-extrabold bg-amber-600 text-white"></span>
+            <span id="feat-continent-text" class="text-xs font-bold text-slate-400"></span>
+          </div>
+          <h3 id="feat-title" class="text-2xl font-black text-slate-900 tracking-tight"></h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="readAloud()" class="text-xs font-bold px-3 py-1.5 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 flex items-center gap-1.5">
+            🔊 استمع للشرح
+          </button>
+          <button onclick="closeFeatureCard()" class="text-xs font-bold text-slate-400 hover:text-slate-700 px-3 py-1.5 rounded-xl hover:bg-slate-100">
+            إغلاق ✕
+          </button>
+        </div>
+      </div>
+      <p id="feat-desc" class="text-sm font-semibold text-slate-700 leading-relaxed"></p>
+      <div id="feat-details-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2"></div>
+    </div>
+
+  </main>
+
+  <!-- ==================== الفوتر ==================== -->
+  <footer class="bg-white border-t border-slate-200 mt-12 py-8 text-center text-xs font-semibold text-slate-500 space-y-1">
+    <p class="font-extrabold text-slate-800 text-sm">مركز تعلم الدراسات الاجتماعية · الصف الثالث الإعدادي</p>
+    <p class="text-xs text-slate-500">قسم الجغرافيا — الخرائط التفاعلية الجغرافية والمناخية الذكية</p>
+    <p class="text-[11px] text-slate-400">جميع الحقوق محفوظة © مركز تعلم الدراسات الاجتماعية</p>
+  </footer>
+
+  <!-- ==================== كود الجافاسكريبت والمستشعرات كاملة ==================== -->
+  <script>
+    const width = 1000;
+    const height = 520;
+    const projection = d3.geoNaturalEarth1()
+      .scale(168)
+      .translate([width / 2, height / 2 + 10]);
+
+    const path = d3.geoPath().projection(projection);
+
+    let currentTab = 'blank';
+    let currentContinent = 'all';
+    let currentSelectedFeat = null;
+    let selectedClimateId = null;
+
+    let showLongitudes = false;
+    let showLatitudes = false;
+
+    // خطوط الطول المقررة (Meridians)
+    const LONGITUDE_DEGREES = [-150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150];
+
+    // دوائر العرض المقررة (Parallels)
+    const LATITUDE_DEFINITIONS = [
+      { lat: 66.5, name: 'الدائرة القطبية الشمالية (66.5° ش)', color: '#0284C7', dashed: true, strokeWidth: 1.5 },
+      { lat: 45, name: 'دائرة عرض 45° شمالاً', color: '#64748B', dashed: true, strokeWidth: 1 },
+      { lat: 23.5, name: 'مدار السرطان (23.5° ش)', color: '#EA580C', dashed: true, strokeWidth: 1.8 },
+      { lat: 0, name: 'خط الاستواء (0°)', color: '#DC2626', dashed: false, strokeWidth: 2.2 },
+      { lat: -23.5, name: 'مدار الجدي (23.5° ج)', color: '#D97706', dashed: true, strokeWidth: 1.8 },
+      { lat: -45, name: 'دائرة عرض 45° جنوباً', color: '#64748B', dashed: true, strokeWidth: 1 },
+      { lat: -66.5, name: 'الدائرة القطبية الجنوبية (66.5° ج)', color: '#0284C7', dashed: true, strokeWidth: 1.5 }
+    ];
+
+    // قاعدة بيانات الأقاليم المناخية الـ 9 المقررة بالإحداثيات الواقعية
+    const CLIMATE_ZONES_DATA = [
+      {
+        id: 'equatorial',
+        name: 'الإقليم الاستوائي وشبه الاستوائي',
+        group: 'الأقاليم الحارة (0°-10°)',
+        latitudes: '0° - 10° شمالاً وجنوباً',
+        color: '#15803D',
+        temp: 'حرارة مرتفعة طوال العام',
+        rain: 'أمطار غزيرة تسقط طوال العام (تصاعدية)',
+        flora: 'غابات استوائية كثيفة متشابكة الأشجار (المطاط والماهوجني)',
+        fauna: 'الزواحف والقرود والطيور الملونة المتسلقة',
+        locations: 'حوض الأمازون بأمريكا الجنوبية، حوض الكونغو وسواحل خليج غينيا بإفريقيا، وجزر إندونيسيا بآسيا.',
+        examTip: 'سؤال متكرر: ما النتائج المترتبة على وقوع حوض الأمازون والكونغو في الإقليم الاستوائي؟ نمو غابات استوائية كثيفة متشابكة الأشجار وارتفاع الحرارة والمطر طوال العام.',
+        polygons: [
+          { regionName: 'حوض الأمازون بأمريكا الجنوبية', points: [[-78, 3], [-70, 4], [-60, 2], [-50, 0], [-48, -4], [-55, -8], [-68, -7], [-76, -3], [-78, 3]] },
+          { regionName: 'حوض الكونغو وسواحل خليج غينيا بإفريقيا', points: [[8, 5], [16, 5], [26, 4], [30, 2], [29, -4], [20, -5], [12, -2], [9, 3], [8, 5]] },
+          { regionName: 'جزر إندونيسيا وشبه جزيرة الملايو بآسيا', points: [[95, 5], [105, 5], [118, 4], [128, 2], [130, -3], [120, -7], [106, -7], [96, 0], [95, 5]] }
+        ]
+      },
+      {
+        id: 'tropical',
+        name: 'المداري الحار (السوداني)',
+        group: 'الأقاليم الحارة (10°-18°)',
+        latitudes: '10° - 18° شمالاً وجنوباً',
+        color: '#EA580C',
+        temp: 'صيف حار مرتفع الحرارة، وشتاء جاف معتدل',
+        rain: 'أمطار صيفية غزيرة وجفاف في الشتاء',
+        flora: 'أشجار أقل كثافة من الاستوائية، وتنمو به حشائش السافانا الحارة المتدرجة في الطول',
+        fauna: 'حديقة حيوان طبيعية: حيوانات آكلة للعشب (زراف، فيلة، غزلان) وآكلة للحوم (أسود، نمور)',
+        locations: 'شمال وجنوب حوض الأمازون وهضبة البرازيل، نطاق السافانا شمال وجنوب الكونغو بإفريقيا، وشمال قارة أستراليا.',
+        examTip: 'علل: تعتبر حشائش السافانا حديقة حيوان طبيعية؟ لأنها يعيش بها حيوانات آكلة للعشب وحيوانات آكلة للحوم.',
+        polygons: [
+          { regionName: 'شمال وجنوب حوض الأمازون وهضبة البرازيل', points: [[-72, 10], [-60, 9], [-50, 6], [-46, -10], [-45, -20], [-55, -20], [-60, -12], [-70, -4], [-72, 10]] },
+          { regionName: 'نطاق السافانا الإفريقي شمال وجنوب الكونغو', points: [[-15, 14], [0, 14], [25, 12], [34, 10], [35, -12], [28, -18], [15, -16], [12, -8], [25, -6], [-15, 14]] },
+          { regionName: 'شمال قارة أستراليا', points: [[122, -14], [132, -12], [142, -14], [146, -18], [136, -21], [124, -20], [122, -14]] }
+        ]
+      },
+      {
+        id: 'monsoon',
+        name: 'الإقليم الموسمي',
+        group: 'الأقاليم الحارة (الرياح الموسمية)',
+        latitudes: 'يتشابه مناخياً مع المداري وتتحكم به الرياح الموسمية الصيفية',
+        color: '#9333EA',
+        temp: 'صيف حار رطب، وشتاء جاف وبارد نسبياً',
+        rain: 'أمطار صيفية غزيرة جداً وجفاف تام في الشتاء',
+        flora: 'غابات موسمية بسبب غزارة المطر صيفاً، وأهم أشجارها جوز الهند، وتنمو حشائش السافانا',
+        fauna: 'الفيلة والطيور المائية والحيوانات المدارية',
+        locations: 'الهند وشبه جزيرة الهند الصينية بآسيا، هضبة إثيوبيا وجزيرة مدغشقر بإفريقيا، وأقصى شمال أستراليا (شبه جزيرة رأس يورك).',
+        examTip: 'مقارنة: المداري والموسمي؟ كلاهما صيف حار ممطر وشتاء جاف وتنمو بهما السافانا. الموسمي أمطاره أغزر صيفاً وتنمو به غابات موسمية وجوز الهند.',
+        polygons: [
+          { regionName: 'الهند وشبه جزيرة الهند الصينية بآسيا', points: [[70, 22], [82, 25], [92, 23], [105, 20], [108, 12], [99, 10], [80, 10], [72, 18], [70, 22]] },
+          { regionName: 'هضبة إثيوبيا بإفريقيا', points: [[35, 14], [42, 13], [43, 7], [36, 6], [35, 14]] },
+          { regionName: 'جزيرة مدغشقر بإفريقيا', points: [[45, -13], [50, -14], [48, -25], [44, -24], [45, -13]] },
+          { regionName: 'شبه جزيرة رأس يورك بشمال أستراليا', points: [[130, -11], [137, -11], [143, -12], [144, -15], [132, -14], [130, -11]] }
+        ]
+      },
+      {
+        id: 'mediterranean',
+        name: 'إقليم البحر المتوسط',
+        group: 'المعتدلة الدفيئة (30°-45° غرب القارات)',
+        latitudes: '30° - 45° شمالاً وجنوباً في غرب القارات',
+        color: '#0284C7',
+        temp: 'حار صيفاً، دافئ شتاءً',
+        rain: 'أمطار شتوية وجفاف صيفاً (حار جاف صيفاً دافئ ممطر شتاءً)',
+        flora: 'غابات البحر المتوسط دائمة الخضرة (أهم أشجارها الزيتون)، وتنمو حشائش الاستبس (البراري)',
+        fauna: 'الأغنام والماعز وتستغل حشائش الاستبس كمراعٍ طبيعية ممتازة',
+        locations: 'سواحل شمال إفريقيا وجنوب أوروبا وبلاد الشام، الساحل الأوسط بتشيلي، ولاية كاليفورنيا بأمريكا الشمالية، جنوب غرب إفريقيا، وجنوب غرب أستراليا.',
+        examTip: 'سؤال ذهبي: ما الأهمية الاقتصادية لحشائش الاستبس؟ تنمو بالقرب من غابات البحر المتوسط وتستغل كمراعٍ طبيعية للثروة الحيوانية (وتعرف في أمريكا الشمالية بالبراري).',
+        polygons: [
+          { regionName: 'سواحل حوض البحر المتوسط', points: [[-8, 38], [5, 42], [18, 41], [32, 36], [35, 33], [25, 31], [10, 34], [-6, 34], [-8, 38]] },
+          { regionName: 'ولاية كاليفورنيا بالولايات المتحدة', points: [[-124, 40], [-119, 39], [-116, 33], [-120, 33], [-124, 40]] },
+          { regionName: 'الساحل الأوسط بدولة تشيلي', points: [[-73, -31], [-70, -32], [-71, -38], [-74, -37], [-73, -31]] },
+          { regionName: 'جنوب غرب قارة إفريقيا (منطقة الكاب)', points: [[17, -31], [22, -31], [24, -34], [18, -34], [17, -31]] },
+          { regionName: 'جنوب غرب قارة أستراليا', points: [[115, -31], [119, -31], [121, -35], [116, -34], [115, -31]] }
+        ]
+      },
+      {
+        id: 'china',
+        name: 'الإقليم الصيني (المعتدل الدافئ شرق القارات)',
+        group: 'المعتدلة الدفيئة (30°-45° شرق القارات)',
+        latitudes: '30° - 45° شمالاً وجنوباً في شرق القارات',
+        color: '#0D9488',
+        temp: 'حار صيفاً، منخفض الحرارة وبارد شتاءً',
+        rain: 'أمطار طوال العام وتزداد صيفاً، ويتعرض لعواصف التيفون المدارية المدمرة',
+        flora: 'غابات الإقليم الصيني دائمة الخضرة (الصفصاف والبلوط)، وتنمو حشائش الاستبس',
+        fauna: 'الطيور والماشية بالمراعي الطبيعية',
+        locations: 'شرق الصين بآسيا، جنوب شرق الولايات المتحدة الأمريكية، جنوب شرق البرازيل وسهول البمباس بالأرجنتين، وجنوب شرق أستراليا.',
+        examTip: 'مقارنة: البحر المتوسط والصيني؟ كلاهما بين 30°-45°، لكن المتوسط غرب القارات وأمطاره شتاءً فقط، بينما الصيني شرق القارات وأمطاره طوال العام تزداد صيفاً ويتعرض للتيفون.',
+        polygons: [
+          { regionName: 'شرق الصين بقارة آسيا', points: [[110, 35], [122, 35], [123, 24], [112, 23], [110, 35]] },
+          { regionName: 'جنوب شرق الولايات المتحدة الأمريكية', points: [[-92, 33], [-77, 34], [-79, 28], [-90, 29], [-92, 33]] },
+          { regionName: 'جنوب شرق البرازيل وسهول البمباس بالأرجنتين', points: [[-58, -26], [-48, -26], [-50, -36], [-59, -36], [-58, -26]] },
+          { regionName: 'جنوب شرق قارة أستراليا', points: [[146, -32], [153, -31], [151, -38], [144, -37], [146, -32]] }
+        ]
+      },
+      {
+        id: 'west_europe',
+        name: 'إقليم غرب أوروبا',
+        group: 'المعتدلة الباردة (45°-60° غرب القارات)',
+        latitudes: '45° - 60° شمالاً وجنوباً في غرب القارات',
+        color: '#4338CA',
+        temp: 'معتدل صيفاً، بارد شتاءً',
+        rain: 'أمطار تسقط طوال العام وتزداد شتاءً وخريفاً بسبب الرياح العكسية الغربية',
+        flora: 'الغابات النفضية (تنفض أوراقها شتاءً لشدة البرودة)، وأهم أشجارها الزان',
+        fauna: 'الثعالب والطيور والحيوانات الثديية بالغابات',
+        locations: 'شمال غرب أوروبا (بريطانيا وفرنسا والنرويج)، أقصى شمال غرب أمريكا الشمالية، وأقصى جنوب غرب تشيلي بأمريكا الجنوبية.',
+        examTip: 'سؤال علل: تسمية الغابات النفضية بهذا الاسم؟ لأن أشجارها تنفض أوراقها في فصل الشتاء لشدة البرودة، وأهم أشجارها شجر الزان.',
+        polygons: [
+          { regionName: 'شمال غرب أوروبا (بريطانيا، فرنسا، النرويج)', points: [[-10, 50], [5, 52], [15, 56], [12, 63], [4, 60], [-5, 58], [-10, 50]] },
+          { regionName: 'أقصى شمال غرب أمريكا الشمالية', points: [[-132, 54], [-124, 52], [-122, 59], [-133, 58], [-132, 54]] },
+          { regionName: 'أقصى جنوب غرب تشيلي بأمريكا الجنوبية', points: [[-75, -44], [-71, -44], [-71, -54], [-75, -53], [-75, -44]] }
+        ]
+      },
+      {
+        id: 'laurentian',
+        name: 'الإقليم اللورنسي (المعتدل البارد شرق القارات)',
+        group: 'المعتدلة الباردة (45°-60° شرق القارات)',
+        latitudes: '45° - 60° شمالاً وجنوباً في شرق القارات',
+        color: '#C026D3',
+        temp: 'معتدل صيفاً، بارد شتاءً',
+        rain: 'أمطار طوال العام وتزداد صيفاً، وتتساقط الثلوج في الشتاء',
+        flora: 'الغابات المخروطية الصنوبرية (الصنوبر والشربين)',
+        fauna: 'حيوانات ذات فراء كثيف لحمايتها من البرد مثل الدب القطبي',
+        locations: 'شمال شرق الصين وشمال اليابان بآسيا، وشمال شرق أمريكا الشمالية (هضبة لبرادور وسانت لورنس).',
+        examTip: 'سؤال امتحاني: إلى أي إقليم تنتمي هضبة لبرادور وحيوان الدب القطبي؟ الإقليم المعتدل البارد شرق القارات (اللورنسي)، وتنمو به الغابات المخروطية (الصنوبر والشربين).',
+        polygons: [
+          { regionName: 'شمال شرق الصين وشمال اليابان (هوكايدو)', points: [[122, 43], [135, 43], [145, 45], [142, 50], [128, 49], [122, 43]] },
+          { regionName: 'شمال شرق أمريكا الشمالية وهضبة لبرادور', points: [[-74, 45], [-63, 46], [-58, 52], [-66, 56], [-76, 51], [-74, 45]] }
+        ]
+      },
+      {
+        id: 'tundra',
+        name: 'إقليم التندرا (القطبي شديد البرودة)',
+        group: 'الأقاليم الباردة (60°-90°)',
+        latitudes: '60° - 90° شمالاً وجنوباً بالمناطق القطبية',
+        color: '#38BDF8',
+        temp: 'صيف قصير بارد نسبياً، وشتاء طويل شديد البرودة تتساقط فيه الثلوج',
+        rain: 'أمطار قليلة تسقط في فصل الصيف القصير، وثلوج مستمرة شتاءً',
+        flora: 'طحالب تنمو سريعاً في فصل ذوبان الجليد (الصيف)',
+        fauna: 'حيوان الرنة (الكاريبو) والدببة والذئاب القطبية',
+        locations: 'سواحل شمال آسيا (سيبيريا)، شمال كندا وألاسكا وجزيرة غرينلاند بأمريكا الشمالية، والقارة القطبية الجنوبية (أنتاركتيكا) بالكامل.',
+        examTip: 'سؤال امتحان: ما النتائج المترتبة على قصر فصل الصيف بإقليم التندرا؟ نمو طحالب ونباتات سريعة وقصيرة في فصل ذوبان الجليد وتتغذى عليها حيوانات مثل حيوان الرنة.',
+        polygons: [
+          { regionName: 'شمال سيبيريا بقارة آسيا وسواحل المحيط المتجمد', points: [[60, 68], [90, 69], [130, 70], [170, 68], [165, 74], [115, 75], [75, 73], [60, 68]] },
+          { regionName: 'ألاسكا وشمال كندا بأمريكا الشمالية', points: [[-165, 68], [-130, 68], [-95, 67], [-75, 64], [-80, 72], [-120, 73], [-160, 71], [-165, 68]] },
+          { regionName: 'جزيرة غرينلاند الجليدية', points: [[-50, 64], [-38, 65], [-35, 74], [-45, 77], [-55, 70], [-50, 64]] }
+        ]
+      },
+      {
+        id: 'mountain',
+        name: 'الإقليم الجبلي',
+        group: 'الأقاليم الباردة المرتفعة',
+        latitudes: 'يشغل القمم والمنحدرات العليا للسلاسل الجبلية في العالم',
+        color: '#78350F',
+        temp: 'شديد البرودة وكثيراً ما تغطي القمم الجليد طوال العام (مثل قمم الهيمالايا)',
+        rain: 'أمطار غزيرة أو ثلوج حسب اتجاه الرياح الرطبة والارتفاع الشاهق',
+        flora: 'تتنوع الحياة النباتية طبقاً لعاملين أساسيين: الارتفاع عن سطح البحر، وكمية المطر',
+        fauna: 'الوعول والماعز الجبلي والنسور الجارحة',
+        locations: 'سلاسل جبال الهيمالايا بآسيا، جبال الألب بأوروبا، جبال الروكي بأمريكا الشمالية، وجبال الأنديز بأمريكا الجنوبية.',
+        examTip: 'علل: تتنوع الحياة النباتية في الإقليم الجبلي؟ طبقاً لارتفاع السطح وكمية المطر. ويغطى الجليد القمم الجبلية لأن الحرارة تقل درجة واحدة مئوية كلما ارتفعنا 150 متراً.',
+        polygons: [
+          { regionName: 'سلسلة جبال الهيمالايا بآسيا', points: [[72, 34], [80, 31], [90, 28], [96, 27], [92, 29], [82, 33], [72, 34]] },
+          { regionName: 'سلسلة جبال الأنديز بأمريكا الجنوبية', points: [[-74, 8], [-72, -5], [-68, -20], [-68, -35], [-72, -52], [-74, -50], [-71, -34], [-71, -19], [-75, -4], [-76, 7], [-74, 8]] },
+          { regionName: 'سلسلة جبال الروكي بأمريكا الشمالية', points: [[-126, 56], [-120, 52], [-112, 44], [-106, 36], [-109, 35], [-116, 44], [-124, 52], [-128, 56], [-126, 56]] }
+        ]
+      }
+    ];
+
+    const FEATURES = [
+      { id: 'himalayas', name: 'جبال الهيمالايا (قمة إيفرست 8848م)', cat: 'mountain', cont: 'asia', lon: 86.92, lat: 27.98, color: '#DC2626', desc: 'أعلى سلاسل الجبال في العالم بوسط آسيا وبها قمة إيفرست (8848م).', details: ['تفصل شبه القارة الهندية عن هضبة التبت', 'تغطي قممها الثلوج الدائمة طوال العام'] },
+      { id: 'tibet', name: 'هضبة التبت (سقف العالم)', cat: 'plateau', cont: 'asia', lon: 88.5, lat: 32.5, color: '#D97706', desc: 'أعلى هضاب العالم وتعرف بسقف العالم لارتفاعها عن قمم الجبال المجاورة.', details: ['تنبع منها أنهار كبرى كاليانجتسي', 'مناخها شديد البرودة وجاف لارتفاعها الشاهق'] },
+      { id: 'deccan', name: 'هضبة الدكن', cat: 'plateau', cont: 'asia', lon: 77.5, lat: 17.5, color: '#D97706', desc: 'هضبة مثلثة الشكل تشغل وسط وجنوب شبه القارة الهندية.', details: ['تحدها سلاسل جبال الغات الشرقية والغربية', 'تنحدر نحو الشرق وتصب أنهارها بخليج البنغال'] },
+      { id: 'nile', name: 'نهر النيل (أفريقيا)', cat: 'river', cont: 'africa', lon: 31.2, lat: 26.5, color: '#0284C7', desc: 'أطول أنهار العالم (6670 كم) ينبع من هضبة إثيوبيا وهضبة البحيرات الاستوائية ويصب في المتوسط.', details: ['ينتهي بفرعي دمياط ورشيد عند الدلتا شمالاً', 'تربة فيضية خصبة قامت عليها الحضارة المصرية'] },
+      { id: 'atlas', name: 'جبال أطلس', cat: 'mountain', cont: 'africa', lon: -5.0, lat: 32.0, color: '#DC2626', desc: 'سلاسل جبلية شمال غرب أفريقيا تحصر بينها هضبة الشطوط بالجزائر.', details: ['تحصر بين سلاسلها هضبة الشطوط', 'تنتمي سفوحها الشمالية لمناخ البحر المتوسط'] },
+      { id: 'ethiopia_plat', name: 'هضبة إثيوبيا (الحبشة)', cat: 'plateau', cont: 'africa', lon: 39.0, lat: 9.5, color: '#D97706', desc: 'هضبة بركانية شاهقة تمثل المنبع الموسمي الصيفي الرئيسي لنهر النيل (84% من إيراده).', details: ['تسقط عليها أمطار موسمية صيفية غزيرة تغذي نهر النيل'] },
+      { id: 'gibraltar', name: 'مضيق جبل طارق', cat: 'strait', cont: 'africa', lon: -5.6, lat: 35.95, color: '#7C3AED', desc: 'المضيق الاستراتيجي الذي يفصل بين إفريقيا وأوروبا ويصل المتوسط بالأطلنطي.', details: ['يفصل بين المغرب وإسبانيا', 'المنفذ الغربي للبحر المتوسط'] },
+      { id: 'alps', name: 'جبال الألب الأوروبية', cat: 'mountain', cont: 'europe', lon: 10.0, lat: 46.5, color: '#DC2626', desc: 'تمتد من الغرب للشرق بوسط أوروبا (البرانس بإسبانيا، والألب الدينارية بالبلقان).', details: ['تقطعها أودية نهرية مثل الراين والدانوب', 'تغطي قممها الثلوج شتاءً'] },
+      { id: 'meseta', name: 'هضبة الميزيتا', cat: 'plateau', cont: 'europe', lon: -4.0, lat: 40.0, color: '#D97706', desc: 'تشغل الجزء الأكبر من مساحة دولة إسبانيا في جنوب غرب أوروبا.', details: ['تنحدر أرضها غرباً نحو المحيط الأطلنطي'] },
+      { id: 'volga', name: 'نهر الفولجا (أطول أنهار أوروبا)', cat: 'river', cont: 'europe', lon: 48.0, lat: 53.0, color: '#0284C7', desc: 'أطول أنهار أوروبا (3530 كم) وينحدر جنوباً ليصب في بحر قزوين أكبر بحر مغلق بالعالم.', details: ['شريان مائي وصناعي حيوي في السهل الأوروبي'] },
+      { id: 'rockies', name: 'جبال الروكي (أمريكا الشمالية)', cat: 'mountain', cont: 'north_america', lon: -110.0, lat: 44.0, color: '#DC2626', desc: 'أعلى سلاسل الجبال في أمريكا الشمالية وتقع في الغرب وتغطي قممها الثلوج شتاءً.', details: ['تمتد بمحاذاة الساحل الغربي', 'تسبب ضيق السهول الساحلية المطلة على الهادي'] },
+      { id: 'mississippi', name: 'نهر الميسيسيبي', cat: 'river', cont: 'north_america', lon: -90.5, lat: 33.0, color: '#0284C7', desc: 'أطول أنهار أمريكا الشمالية ويجري في السهول الوسطى ويصب في خليج المكسيك.', details: ['تنتشر حوله أخصب الأراضي الزراعية في القارة'] },
+      { id: 'andes', name: 'جبال الأنديز (أمريكا الجنوبية)', cat: 'mountain', cont: 'south_america', lon: -71.0, lat: -18.0, color: '#DC2626', desc: 'أطول سلسلة جبال قارية بالعالم تمتد غرب أمريكا الجنوبية بمحاذاة المحيط الهادي.', details: ['أدت لضيق السهول الساحلية الغربية', 'تمتد من أقصى الشمال حتى أقصى الجنوب'] },
+      { id: 'amazon', name: 'نهر الأمازون', cat: 'river', cont: 'south_america', lon: -60.0, lat: -3.0, color: '#0284C7', desc: 'أوسع حوض نهري وسهول فيضية في العالم، يغطى بغابات استوائية ويصب في الأطلنطي.', details: ['أغزر نهر في العالم من حيث التدفق المائي', 'تسوده الغابات الاستوائية المتشابكة'] },
+      { id: 'brazil_plat', name: 'هضبة البرازيل', cat: 'plateau', cont: 'south_america', lon: -48.0, lat: -15.0, color: '#D97706', desc: 'أكبر وأعلى هضاب قارة أمريكا الجنوبية وتقع في شرق القارة وتشغل مساحة شاسعة.', details: ['ينحدر سطحها نحو الشمال والغرب'] },
+      { id: 'great_dividing', name: 'جبال الحاجز الكبير (أستراليا)', cat: 'mountain', cont: 'australia', lon: 149.0, lat: -30.0, color: '#DC2626', desc: 'تمتد على طول الساحل الشرقي لأستراليا مسببة ضيق السهول الشرقية على الهادي.', details: ['تعرف بالألب الأسترالية وتقسم لشمالية وجنوبية'] },
+      { id: 'western_plat', name: 'الهضبة الغربية بأستراليا', cat: 'plateau', cont: 'australia', lon: 123.0, lat: -24.0, color: '#D97706', desc: 'تشغل نصف مساحة قارة أستراليا ويشبه مظهرها تضاريس إفريقيا في سيادة الهضاب.', details: ['يسود معظمها المناخ الصحراوي الجاف'] },
+      { id: 'murray_darling', name: 'نهرا مري ودارلنج', cat: 'river', cont: 'australia', lon: 143.0, lat: -34.0, color: '#0284C7', desc: 'أهم أنهار أستراليا ويجريان في السهول الجنوبية الشرقية ويصبان في الخليج الأسترالي الكبير.', details: ['أخصب المناطق الزراعية ومصدر تركز السكان'] },
+      { id: 'bering', name: 'مضيق بيرنغ', cat: 'strait', cont: 'asia', lon: -169.0, lat: 65.7, color: '#7C3AED', desc: 'يفصل أقصى شمال شرق آسيا عن ألاسكا بأمريكا الشمالية ويصل الهادي بالقطبي الشمالي.', details: ['حلقة وصل مائية واستراتيجية كبرى'] },
+      { id: 'bab_el_mandeb', name: 'مضيق باب المندب', cat: 'strait', cont: 'asia', lon: 43.3, lat: 12.6, color: '#7C3AED', desc: 'مضيق عربي استراتيجي يفصل آسيا عن إفريقيا ويصل البحر الأحمر بخليج عدن.', details: ['تشرف عليه اليمن وجيبوتي'] }
+    ];
+
+    const ACCURATE_RIVERS_DATA = [
+      { id: 'nile_main', coords: [[33.0, -0.5], [32.5, 0.4], [31.5, 2.3], [31.6, 4.8], [31.5, 7.5], [30.2, 9.5], [32.5, 12.0], [32.55, 15.6], [32.8, 18.5], [30.5, 19.2], [30.5, 21.0], [31.5, 22.0], [32.9, 24.0], [32.6, 25.7], [32.7, 26.1], [31.2, 27.2], [31.1, 29.1], [31.24, 30.1]] },
+      { id: 'nile_blue', coords: [[37.3, 12.0], [36.0, 11.5], [34.5, 12.5], [33.5, 14.0], [32.55, 15.6]] },
+      { id: 'nile_rosetta', coords: [[31.24, 30.1], [30.8, 30.8], [30.4, 31.45]] },
+      { id: 'nile_damietta', coords: [[31.24, 30.1], [31.5, 30.8], [31.8, 31.52]] },
+      { id: 'amazon_main', coords: [[-75.5, -4.5], [-73.2, -3.7], [-70.0, -3.8], [-65.0, -3.2], [-60.0, -3.1], [-54.7, -2.4], [-51.0, -1.0], [-49.5, -0.1]] },
+      { id: 'mississippi_main', coords: [[-95.2, 47.2], [-93.2, 44.9], [-90.5, 41.5], [-90.2, 38.6], [-90.0, 35.1], [-90.9, 32.3], [-90.1, 29.9], [-89.2, 29.1]] },
+      { id: 'volga_main', coords: [[32.5, 57.2], [35.9, 56.8], [39.8, 57.6], [44.0, 56.3], [49.1, 55.8], [50.1, 53.2], [47.5, 51.5], [44.5, 48.7], [48.0, 46.3]] },
+      { id: 'murray', coords: [[148.0, -36.5], [146.0, -36.0], [144.5, -35.8], [141.9, -34.1], [139.3, -35.5]] },
+      { id: 'darling', coords: [[149.0, -29.0], [146.0, -30.5], [142.5, -33.0], [141.9, -34.1]] },
+      { id: 'ob', coords: [[83.0, 52.5], [82.0, 56.0], [75.0, 61.0], [69.0, 61.0], [66.5, 66.5]] },
+      { id: 'yenisey', coords: [[93.0, 52.0], [92.8, 56.0], [88.0, 65.5], [86.0, 71.5]] },
+      { id: 'lena', coords: [[106.0, 53.5], [116.0, 60.5], [129.5, 62.0], [127.0, 72.5]] }
+    ];
+
+    const COUNTRIES_DICT = {
+      "818": { iso2: "eg", name: "جمهورية مصر العربية", cont: "قارة أفريقيا", cap: "القاهرة", desc: "تقع شمال شرق إفريقيا، يمر بها نهر النيل وتطل على البحرين المتوسط والأحمر وبها قناة السويس وروافد دلتا النيل." },
+      "012": { iso2: "dz", name: "الجمهورية الجزائرية", cont: "قارة أفريقيا", cap: "الجزائر", desc: "أكبر دول إفريقيا مساحة، تضم هضبة الشطوط وسلاسل جبال أطلس التل وأطلس الصحراء والصحراء الكبرى." },
+      "504": { iso2: "ma", name: "المملكة المغربية", cont: "قارة أفريقيا", cap: "الرباط", desc: "تشرف على مضيق جبل طارق وتضم سلاسل جبال أطلس وتطل على البحر المتوسط والمحيط الأطلنطي." },
+      "788": { iso2: "tn", name: "الجمهورية التونسية", cont: "قارة أفريقيا", cap: "تونس", desc: "تقع في شمال إفريقيا على ساحل البحر المتوسط وتمتد بها سلاسل جبال أطلس التل الشرقية ومناخها متوسطي." },
+      "434": { iso2: "ly", name: "دولة ليبيا", cont: "قارة أفريقيا", cap: "طرابلس", desc: "تقع في شمال إفريقيا وتضم سهل كلنشو وبحر الرمال العظيم وسواحل متسعة على البحر المتوسط." },
+      "729": { iso2: "sd", name: "جمهورية السودان", cont: "قارة أفريقيا", cap: "الخرطوم", desc: "يجري بها نهر النيل عند ملتقى النيلين الأزرق والأبيض وبها سهول فيضية زراعية متسعة." },
+      "682": { iso2: "sa", name: "المملكة العربية السعودية", cont: "قارة آسيا", cap: "الرياض", desc: "أكبر دول شبه الجزيرة العربية، تضم هضبة نجد وجبال الحجاز وعسير في الغرب وتطل على البحر الأحمر والخليج العربي." },
+      "368": { iso2: "iq", name: "جمهورية العراق", cont: "قارة آسيا", cap: "بغداد", desc: "أرض الرافدين حيث يجري نهرا دجلة والفرات ويلتقيان في شط العرب وتحدها جبال زاجروس شرقا." },
+      "760": { iso2: "sy", name: "الجمهورية العربية السورية", cont: "قارة آسيا", cap: "دمشق", desc: "تقع في غرب آسيا وتطل على البحر المتوسط، يجري بها نهر الفرات وتنتمي سفوحها لإقليم البحر المتوسط." },
+      "275": { iso2: "ps", name: "دولة فلسطين", cont: "قارة آسيا", cap: "القدس الشريف", desc: "أرض الإسراء والمعراج وقلب الوطن العربي، تطل على البحر المتوسط والبحر الميت وتتصل بمصر عند سيناء." },
+      "400": { iso2: "jo", name: "المملكة الأردنية", cont: "قارة آسيا", cap: "عمان", desc: "تضم وادي الأردن والبحر الميت أخفض نقطة يابسة بالعالم وتطل على خليج العقبة." },
+      "422": { iso2: "lb", name: "الجمهورية اللبنانية", cont: "قارة آسيا", cap: "بيروت", desc: "تطل على البحر المتوسط وتشتهر بسلاسل جبال لبنان الشرقية والغربية وغابات الأرز ومناخ البحر المتوسط." },
+      "887": { iso2: "ye", name: "الجمهورية اليمنية", cont: "قارة آسيا", cap: "صنعاء", desc: "جنوب غرب شبه الجزيرة العربية وتشرف على مضيق باب المندب الاستراتيجي وبحر العرب وخليج عدن." },
+      "512": { iso2: "om", name: "سلطنة عُمان", cont: "قارة آسيا", cap: "مسقط", desc: "تشرف على مضيق هرمز وبحر العرب وتضم سلاسل جبال الحجر في الشرق." },
+      "784": { iso2: "ae", name: "الإمارات العربية المتحدة", cont: "قارة آسيا", cap: "أبوظبي", desc: "تطل على الخليج العربي وخليج عمان وتتميز بموقع تجاري واستراتيجي عالمي." },
+      "634": { iso2: "qa", name: "دولة قطر", cont: "قارة آسيا", cap: "الدوحة", desc: "شبه جزيرة تمتد في مياه الخليج العربي وتعد من كبرى الدول المصدرة للغاز الطبيعي." },
+      "414": { iso2: "kw", name: "دولة الكويت", cont: "قارة آسيا", cap: "الكويت", desc: "تقع في شمال غرب الخليج العربي وتتميز بموقع استراتيجي وثروة نفطية هائلة." },
+      "048": { iso2: "bh", name: "مملكة البحرين", cont: "قارة آسيا", cap: "المنامة", desc: "دولة جزرية عربية تقع في مياه الخليج العربي بين السعودية وقطر." },
+      "478": { iso2: "mr", name: "الجمهورية الإسلامية الموريتانية", cont: "قارة أفريقيا", cap: "نواكشوط", desc: "تطل على المحيط الأطلنطي وغنية بخام الحديد وتعتبر معبرا بين شمال وغرب إفريقيا." },
+      "706": { iso2: "so", name: "جمهورية الصومال", cont: "قارة أفريقيا", cap: "مقديشو", desc: "تشغل القرن الإفريقي وتملك أطول سواحل قارية في إفريقيا على المحيط الهندي وخليج عدن." },
+      "262": { iso2: "dj", name: "جمهورية جيبوتي", cont: "قارة أفريقيا", cap: "جيبوتي", desc: "تشرف على المدخل الجنوبي لمضيق باب المندب وخليج عدن." },
+      "156": { iso2: "cn", name: "جمهورية الصين", cont: "قارة آسيا", cap: "بكين", desc: "أكبر دول العالم سكاناً، تضم هضبة التبت ونهر اليانجتسي وسهل شرق الصين ومناخها معتدل دافئ صيني." },
+      "356": { iso2: "in", name: "جمهورية الهند", cont: "قارة آسيا", cap: "نيودلهي", desc: "شبه جزيرة مثلثة تضم هضبة الدكن وجبال الغات وجبال الهيمالايا ويسودها المناخ الموسمي المطير صيفا." },
+      "643": { iso2: "ru", name: "روسيا الاتحادية", cont: "قارة آسيا وأوروبا", cap: "موسكو", desc: "أكبر دول العالم مساحة، تمتد عبر قارتين وتضم سهول سيبيريا (أوب، ينسي، لينا) وجبال الأورال ونهر الفولجا." },
+      "840": { iso2: "us", name: "الولايات المتحدة الأمريكية", cont: "قارة أمريكا الشمالية", cap: "واشنطن", desc: "تضم جبال الروكي غرباً، جبال الأبلاش شرقاً، نهر الميسيسيبي وسهوله الوسطى والبحيرات العظمى." },
+      "124": { iso2: "ca", name: "كندا", cont: "قارة أمريكا الشمالية", cap: "أوتاوا", desc: "ثاني أكبر دول العالم مساحة، تضم هضبة لبرادور وخليج هدسن وتتبع إقليمي التندرا واللورنسي." },
+      "076": { iso2: "br", name: "جمهورية البرازيل", cont: "قارة أمريكا الجنوبية", cap: "برازيليا", desc: "أكبر دول أمريكا الجنوبية مساحة وسكاناً، تضم هضبة البرازيل وحوض نهر الأمازون أوسع سهول فيضية بالعالم." },
+      "036": { iso2: "au", name: "أستراليا", cont: "قارة أستراليا", cap: "كانبيرا", desc: "أصغر قارات العالم مساحة، تسودها الهضبة الغربية وتحدها شرقا جبال الحاجز الكبير ونهرا مري ودارلنج." },
+      "250": { iso2: "fr", name: "فرنسا", cont: "قارة أوروبا", cap: "باريس", desc: "تقع غرب أوروبا، تضم السهل الأوروبي العظيم ونهر السين وهضبة فرنسا الوسطى ومناخ غرب أوروبا." },
+      "276": { iso2: "de", name: "ألمانيا", cont: "قارة أوروبا", cap: "برلين", desc: "تقع في قلب أوروبا ضمن السهل الأوروبي العظيم ويجري بها نهرا الراين والدانوب." },
+      "826": { iso2: "gb", name: "المملكة المتحدة (بريطانيا)", cont: "قارة أوروبا", cap: "لندن", desc: "دولة جزرية شمال غرب أوروبا وتنتمي لنموذج مناخ غرب أوروبا الممطر طوال العام." },
+      "380": { iso2: "it", name: "إيطاليا", cont: "قارة أوروبا", cap: "روما", desc: "شبه جزيرة حذائية في قلب البحر المتوسط تحدها شمالاً جبال الألب وجبال الأبنين ومناخ البحر المتوسط." },
+      "724": { iso2: "es", name: "إسبانيا", cont: "قارة أوروبا", cap: "مدريد", desc: "تشغل معظم شبه جزيرة أيبيريا وبها هضبة الميزيتا وجبال البرانس وتشرف على مضيق جبل طارق." },
+      "392": { iso2: "jp", name: "اليابان", cont: "قارة آسيا", cap: "طوكيو", desc: "دولة جزرية تضم هونشو وهوكايدو وينتمي شمالها للمناخ اللورنسي المعتدل البارد شرق القارات." },
+      "231": { iso2: "et", name: "إثيوبيا", cont: "قارة أفريقيا", cap: "أديس أبابا", desc: "هضبة بركانية شاهقة ينبع منها النيل الأزرق وتمثل المنبع الموسمي لنهر النيل ومناخها مداري وموسمي." },
+      "710": { iso2: "za", name: "جنوب أفريقيا", cont: "قارة أفريقيا", cap: "بريتوريا", desc: "أقصى جنوب القارة وبها هضبة جنوب إفريقيا وجبال دراكنزبرج ومنطقة الكاب بمناخ البحر المتوسط." },
+      "152": { iso2: "cl", name: "تشيلي", cont: "قارة أمريكا الجنوبية", cap: "سانتياغو", desc: "شريط ساحلي غرب جبال الأنديز على المحيط الهادي، وسطها ينتمي للبحر المتوسط وجنوبها لغرب أوروبا." },
+      "032": { iso2: "ar", name: "الأرجنتين", cont: "قارة أمريكا الجنوبية", cap: "بوينس آيرس", desc: "تضم سهول لابلاتا (البمباس) الغنية بزراعة القمح وتربية الأبقار وهضبة بتاجونيا في الجنوب." }
+    };
+
+    function generatePolygonPath(points) {
+      if (!points || !Array.isArray(points) || points.length < 3) return '';
+      const projected = [];
+      for (let i = 0; i < points.length; i++) {
+        try {
+          const pt = projection(points[i]);
+          if (pt && !isNaN(pt[0]) && !isNaN(pt[1])) {
+            projected.push(pt);
+          }
+        } catch (e) {}
+      }
+      if (projected.length < 3) return '';
+      
+      // Quadratic bezier midpoint smoothing for organic, atlas-grade climate contours
+      let d = 'M ' + projected[0][0].toFixed(1) + ' ' + projected[0][1].toFixed(1);
+      for (let i = 0; i < projected.length; i++) {
+        const curr = projected[i];
+        const next = projected[(i + 1) % projected.length];
+        const midX = (curr[0] + next[0]) / 2;
+        const midY = (curr[1] + next[1]) / 2;
+        d += ' Q ' + curr[0].toFixed(1) + ' ' + curr[1].toFixed(1) + ', ' + midX.toFixed(1) + ' ' + midY.toFixed(1);
+      }
+      return d + ' Z';
+    }
+
+    function renderClimatesOverlay() {
+      const cLayer = d3.select('#climates-overlay');
+      cLayer.selectAll('*').remove();
+
+      CLIMATE_ZONES_DATA.forEach(zone => {
+        const isSelected = selectedClimateId === zone.id;
+        const isAnyActive = selectedClimateId !== null;
+        const opacity = isAnyActive ? (isSelected ? 0.92 : 0.18) : 0.72;
+        const strokeWidth = isSelected ? 3.0 : 1.2;
+        const strokeColor = isSelected ? '#FFFFFF' : 'rgba(255,255,255,0.85)';
+
+        const zGroup = cLayer.append('g')
+          .attr('class', 'climate-zone-group')
+          .attr('id', 'cz-' + zone.id);
+
+        zone.polygons.forEach((poly) => {
+          const d = generatePolygonPath(poly.points);
+          if (!d) return;
+
+          zGroup.append('path')
+            .attr('d', d)
+            .attr('fill', zone.color)
+            .attr('fill-opacity', opacity)
+            .attr('stroke', strokeColor)
+            .attr('stroke-width', strokeWidth)
+            .attr('class', 'climate-zone-path')
+            .style('cursor', 'pointer')
+            .style('pointer-events', 'auto')
+            .on('mouseenter', function(event) {
+              showClimateTip(zone.name + ' - ' + poly.regionName, zone.temp + ' · ' + zone.rain, zone.color, event);
+            })
+            .on('mousemove', function(event) {
+              positionClimateTip(event);
+            })
+            .on('mouseleave', function() {
+              hideClimateTip();
+            })
+            .on('click', function(event) {
+              if (event) event.stopPropagation();
+              selectClimateZone(zone.id);
+            })
+            .on('touchstart', function(event) {
+              if (event) event.stopPropagation();
+              selectClimateZone(zone.id);
+            });
+        });
+      });
+    }
+
+    function renderClimatesLegend() {
+      const container = document.getElementById('climates-buttons-grid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      CLIMATE_ZONES_DATA.forEach(zone => {
+        const isSelected = selectedClimateId === zone.id;
+        const btn = document.createElement('button');
+        btn.className = 'flex items-center gap-2 p-2 rounded-xl border text-right transition-all ' + 
+          (isSelected ? 'bg-white border-2 shadow-md ring-2 ring-emerald-500/30' : 'bg-white/80 hover:bg-white border-slate-200/80 text-slate-700');
+        if (isSelected) {
+          btn.style.borderColor = zone.color;
+        }
+        btn.innerHTML = '<span class="w-3.5 h-3.5 rounded-md shrink-0 shadow-xs" style="background-color:' + zone.color + '"></span>' +
+          '<span class="truncate">' + zone.name + '</span>';
+        btn.onclick = (e) => {
+          if (e) e.stopPropagation();
+          selectClimateZone(zone.id);
+        };
+        container.appendChild(btn);
+      });
+
+      const clearBtn = document.getElementById('btn-clear-climate');
+      if (clearBtn) {
+        if (selectedClimateId) clearBtn.classList.remove('hidden');
+        else clearBtn.classList.add('hidden');
+      }
+    }
+
+    function selectClimateZone(zoneId) {
+      if (selectedClimateId === zoneId) {
+        clearSelectedClimate();
+        return;
+      }
+      selectedClimateId = zoneId;
+      const zone = CLIMATE_ZONES_DATA.find(z => z.id === zoneId);
+      if (!zone) return;
+
+      renderClimatesOverlay();
+      renderClimatesLegend();
+
+      const card = document.getElementById('climate-detail-card');
+      card.classList.remove('hidden');
+
+      document.getElementById('card-clim-dot').style.backgroundColor = zone.color;
+      document.getElementById('card-clim-group').innerText = zone.group;
+      document.getElementById('card-clim-lat').innerText = zone.latitudes;
+      document.getElementById('card-clim-name').innerText = zone.name;
+      document.getElementById('card-clim-locations').innerText = zone.locations;
+      document.getElementById('card-clim-temp').innerText = zone.temp;
+      document.getElementById('card-clim-rain').innerText = zone.rain;
+      document.getElementById('card-clim-flora').innerText = zone.flora;
+      document.getElementById('card-clim-fauna').innerText = zone.fauna;
+      document.getElementById('card-clim-exam').innerText = zone.examTip;
+
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearSelectedClimate() {
+      selectedClimateId = null;
+      renderClimatesOverlay();
+      renderClimatesLegend();
+      const card = document.getElementById('climate-detail-card');
+      if (card) card.classList.add('hidden');
+    }
+
+    function readClimateAloud() {
+      const activeZone = CLIMATE_ZONES_DATA.find(z => z.id === selectedClimateId) || CLIMATE_ZONES_DATA[0];
+      if (!activeZone || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(activeZone.name + '. ' + activeZone.temp + '. ' + activeZone.rain + '. أهم النباتات: ' + activeZone.flora);
+      u.lang = 'ar-SA';
+      window.speechSynthesis.speak(u);
+    }
+
+    function showClimateTip(title, desc, color, event) {
+      if (window.innerWidth < 768) return;
+      const tip = document.getElementById('climate-tooltip');
+      if (!tip) return;
+      document.getElementById('clim-title').innerText = title;
+      document.getElementById('clim-desc').innerText = desc;
+      document.getElementById('clim-dot').style.backgroundColor = color;
+      
+      tip.classList.remove('hidden');
+      positionClimateTip(event);
+    }
+
+    function positionClimateTip(event) {
+      const tip = document.getElementById('climate-tooltip');
+      if (!tip || tip.classList.contains('hidden')) return;
+      const wrapper = document.getElementById('mapWrapper').getBoundingClientRect();
+      const clientX = (event.touches && event.touches[0] ? event.touches[0].clientX : event.clientX) || 0;
+      const clientY = (event.touches && event.touches[0] ? event.touches[0].clientY : event.clientY) || 0;
+      const x = clientX - wrapper.left;
+      const y = clientY - wrapper.top;
+
+      tip.style.left = Math.min(Math.max(x + 15, 10), wrapper.width - 320) + 'px';
+      tip.style.top = Math.max(Math.min(y - 80, wrapper.height - 140), 15) + 'px';
+    }
+
+    function hideClimateTip() {
+      const tip = document.getElementById('climate-tooltip');
+      if (tip) tip.classList.add('hidden');
+    }
+
+    const riverLineGen = d3.line()
+      .x(d => projection(d)[0])
+      .y(d => projection(d)[1])
+      .curve(d3.curveBasis);
+
+    function renderAccurateRivers() {
+      const rLayer = d3.select('#rivers-layer');
+      rLayer.selectAll('*').remove();
+      ACCURATE_RIVERS_DATA.forEach(r => {
+        rLayer.append('path')
+          .attr('d', riverLineGen(r.coords))
+          .attr('fill', 'none')
+          .attr('stroke', '#0284C7')
+          .attr('stroke-width', r.id.includes('rosetta') || r.id.includes('damietta') ? 2.0 : 2.8)
+          .attr('stroke-linecap', 'round')
+          .attr('stroke-linejoin', 'round');
+      });
+    }
+
+    function toggleLongitudes() {
+      showLongitudes = !showLongitudes;
+      const layer = document.getElementById('longitudes-layer');
+      const btn = document.getElementById('btn-toggle-longitudes');
+      const indicator = document.getElementById('lon-indicator');
+      if (layer) layer.style.display = showLongitudes ? 'block' : 'none';
+      if (indicator) {
+        indicator.className = 'w-2 h-2 rounded-full transition-colors ' + (showLongitudes ? 'bg-emerald-400 ring-2 ring-emerald-200' : 'bg-slate-300');
+      }
+      if (btn) {
+        if (showLongitudes) {
+          btn.classList.add('bg-indigo-600', 'text-white', 'ring-2', 'ring-indigo-300');
+          btn.classList.remove('bg-white', 'text-slate-700');
+        } else {
+          btn.classList.remove('bg-indigo-600', 'text-white', 'ring-2', 'ring-indigo-300');
+          btn.classList.add('bg-white', 'text-slate-700');
+        }
+      }
+    }
+
+    function toggleLatitudes() {
+      showLatitudes = !showLatitudes;
+      const layer = document.getElementById('latitudes-layer');
+      const btn = document.getElementById('btn-toggle-latitudes');
+      const indicator = document.getElementById('lat-indicator');
+      if (layer) layer.style.display = showLatitudes ? 'block' : 'none';
+      if (indicator) {
+        indicator.className = 'w-2 h-2 rounded-full transition-colors ' + (showLatitudes ? 'bg-emerald-400 ring-2 ring-emerald-200' : 'bg-slate-300');
+      }
+      if (btn) {
+        if (showLatitudes) {
+          btn.classList.add('bg-amber-600', 'text-white', 'ring-2', 'ring-amber-300');
+          btn.classList.remove('bg-white', 'text-slate-700');
+        } else {
+          btn.classList.remove('bg-amber-600', 'text-white', 'ring-2', 'ring-amber-300');
+          btn.classList.add('bg-white', 'text-slate-700');
+        }
+      }
+    }
+
+    function renderGraticules() {
+      // 1. Longitudes (خطوط الطول)
+      const lonLayer = d3.select('#longitudes-layer');
+      lonLayer.selectAll('*').remove();
+
+      const graticuleLineGen = d3.line()
+        .x(d => projection(d)[0])
+        .y(d => projection(d)[1])
+        .curve(d3.curveBasis);
+
+      LONGITUDE_DEGREES.forEach(lon => {
+        const points = [];
+        for (let lat = -78; lat <= 78; lat += 4) {
+          points.push([lon, lat]);
+        }
+        const isGreenwich = lon === 0;
+        const g = lonLayer.append('g');
+        g.append('path')
+          .attr('d', graticuleLineGen(points))
+          .attr('fill', 'none')
+          .attr('stroke', isGreenwich ? '#3730A3' : '#6366F1')
+          .attr('stroke-width', isGreenwich ? 2.0 : 1.0)
+          .attr('stroke-dasharray', isGreenwich ? null : '3 3')
+          .attr('opacity', isGreenwich ? 0.95 : 0.65);
+
+        const topPos = projection([lon, 75]);
+        if (topPos) {
+          g.append('text')
+            .attr('x', topPos[0])
+            .attr('y', topPos[1])
+            .attr('text-anchor', 'middle')
+            .attr('font-size', isGreenwich ? '10.5' : '8.5')
+            .attr('font-weight', isGreenwich ? '900' : '700')
+            .attr('fill', isGreenwich ? '#312E81' : '#4338CA')
+            .attr('stroke', '#FFFFFF')
+            .attr('stroke-width', '2.5')
+            .attr('paint-order', 'stroke fill')
+            .attr('font-family', 'Cairo')
+            .text(isGreenwich ? 'خط جرينتش (0°)' : Math.abs(lon) + '° ' + (lon > 0 ? 'شرقاً' : 'غرباً'));
+        }
+      });
+
+      // 2. Latitudes (دوائر العرض)
+      const latLayer = d3.select('#latitudes-layer');
+      latLayer.selectAll('*').remove();
+
+      LATITUDE_DEFINITIONS.forEach(def => {
+        const points = [];
+        for (let lon = -180; lon <= 180; lon += 4) {
+          points.push([lon, def.lat]);
+        }
+        const g = latLayer.append('g');
+        g.append('path')
+          .attr('d', graticuleLineGen(points))
+          .attr('fill', 'none')
+          .attr('stroke', def.color)
+          .attr('stroke-width', def.strokeWidth)
+          .attr('stroke-dasharray', def.dashed ? '4 3' : null)
+          .attr('opacity', def.lat === 0 ? 0.95 : 0.8);
+
+        const labelPos = projection([-28, def.lat]);
+        if (labelPos) {
+          g.append('text')
+            .attr('x', labelPos[0])
+            .attr('y', labelPos[1] - 4)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', def.lat === 0 ? '11' : '9')
+            .attr('font-weight', 'bold')
+            .attr('fill', def.color)
+            .attr('stroke', '#FFFFFF')
+            .attr('stroke-width', '3')
+            .attr('paint-order', 'stroke fill')
+            .attr('font-family', 'Cairo')
+            .text(def.name);
+        }
+      });
+    }
+
+    const svgElem = d3.select('#realWorldSvg');
+    const zoomGroup = d3.select('#zoomable-map-group');
+
+    const zoomBehavior = d3.zoom()
+      .scaleExtent([1, 6])
+      .on('zoom', (event) => {
+        zoomGroup.attr('transform', event.transform);
+      });
+
+    svgElem.call(zoomBehavior);
+
+    function zoomIn() {
+      svgElem.transition().duration(250).call(zoomBehavior.scaleBy, 1.3);
+    }
+
+    function zoomOut() {
+      svgElem.transition().duration(250).call(zoomBehavior.scaleBy, 0.77);
+    }
+
+    function resetZoom() {
+      svgElem.transition().duration(350).call(zoomBehavior.transform, d3.zoomIdentity);
+      setContinent('all');
+    }
+
+    function toggleFullscreen() {
+      const mapElem = document.getElementById('mapWrapper');
+      if (!document.fullscreenElement) {
+        if (mapElem.requestFullscreen) mapElem.requestFullscreen();
+        else if (mapElem.webkitRequestFullscreen) mapElem.webkitRequestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    function switchTab(tabId) {
+      currentTab = tabId;
+
+      const isBlank = tabId === 'blank';
+      const isClimates = tabId === 'climates';
+
+      if (!isBlank) {
+        hideCountryPopover();
+        closeCountryCard();
+        d3.selectAll('.country-path')
+          .attr('fill', '#F1EDE4')
+          .attr('stroke', '#CBD5E1')
+          .attr('stroke-width', 0.8)
+          .style('cursor', 'default')
+          .style('pointer-events', isClimates ? 'none' : 'auto');
+      } else {
+        d3.selectAll('.country-path')
+          .style('cursor', 'pointer')
+          .style('pointer-events', 'auto');
+      }
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = 'tab-btn px-3 py-1.5 rounded-lg text-slate-300 hover:text-white';
+      });
+      const activeTabBtn = document.getElementById('tab-' + tabId);
+      if (activeTabBtn) activeTabBtn.className = 'tab-btn px-3 py-1.5 rounded-lg bg-blue-600 text-white shadow-xs';
+
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.className = 'nav-tab px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 transition-colors';
+      });
+      const activeNavBtn = document.getElementById('nav-' + tabId);
+      if (activeNavBtn) activeNavBtn.className = 'nav-tab px-3 py-1.5 rounded-lg bg-blue-600 text-white shadow-xs';
+
+      const mToolbar = document.getElementById('mountains-toolbar');
+      const wToolbar = document.getElementById('waters-toolbar');
+      const cLegend = document.getElementById('climates-legend-bar');
+      const cOverlay = document.getElementById('climates-overlay');
+      const rLayer = document.getElementById('rivers-layer');
+
+      mToolbar.classList.add('hidden');
+      wToolbar.classList.add('hidden');
+      cLegend.classList.add('hidden');
+      cOverlay.style.display = 'none';
+      rLayer.style.display = 'none';
+
+      if (tabId === 'mountains') {
+        mToolbar.classList.remove('hidden');
+      } else if (tabId === 'waters') {
+        wToolbar.classList.remove('hidden');
+        rLayer.style.display = 'inline';
+      } else if (tabId === 'climates') {
+        cLegend.classList.remove('hidden');
+        cOverlay.style.display = 'inline';
+        renderClimatesOverlay();
+        renderClimatesLegend();
+      }
+
+      if (tabId !== 'climates') {
+        clearSelectedClimate();
+      }
+
+      updateView();
+    }
+
+    function updateView() {
+      const g = d3.select('#interactive-pins-layer');
+      g.selectAll('*').remove();
+
+      if (currentTab === 'blank' || currentTab === 'climates') return;
+
+      let items = [];
+      if (currentTab === 'mountains') {
+        items = FEATURES.filter(f => f.cat === 'mountain' || f.cat === 'plateau');
+      } else if (currentTab === 'waters') {
+        items = FEATURES.filter(f => f.cat === 'river' || f.cat === 'strait');
+      }
+
+      if (currentContinent !== 'all') {
+        items = items.filter(f => f.cont === currentContinent);
+      }
+
+      renderPins(items);
+    }
+
+    function renderPins(items) {
+      const g = d3.select('#interactive-pins-layer');
+      g.selectAll('*').remove();
+
+      items.forEach(item => {
+        const coords = projection([item.lon, item.lat]);
+        if (!coords) return;
+        const [x, y] = coords;
+
+        const pinGroup = g.append('g')
+          .attr('class', 'cursor-pointer')
+          .on('click', () => selectFeature(item));
+
+        pinGroup.append('circle')
+          .attr('cx', x)
+          .attr('cy', y)
+          .attr('r', 18)
+          .attr('fill', 'transparent');
+
+        const pinCircle = pinGroup.append('circle')
+          .attr('cx', x)
+          .attr('cy', y)
+          .attr('r', 7.5)
+          .attr('fill', item.color)
+          .attr('stroke', '#FFFFFF')
+          .attr('stroke-width', 2.2);
+
+        pinGroup.append('circle')
+          .attr('cx', x)
+          .attr('cy', y)
+          .attr('r', 2)
+          .attr('fill', '#FFFFFF');
+
+        const label = pinGroup.append('g')
+          .attr('class', 'opacity-0 pointer-events-none transition-opacity duration-150');
+
+        label.append('rect')
+          .attr('x', x - 60)
+          .attr('y', y - 26)
+          .attr('width', 120)
+          .attr('height', 22)
+          .attr('rx', 6)
+          .attr('fill', '#0F172A')
+          .attr('opacity', 0.95);
+
+        label.append('text')
+          .attr('x', x)
+          .attr('y', y - 11)
+          .attr('text-anchor', 'middle')
+          .attr('font-size', '10')
+          .attr('font-family', 'Cairo')
+          .attr('font-weight', 'bold')
+          .attr('fill', '#FFFFFF')
+          .text(item.name.split('(')[0]);
+
+        pinGroup.on('mouseenter', () => {
+          label.attr('class', 'opacity-100 pointer-events-none transition-opacity duration-150');
+          pinCircle.attr('stroke-width', 3.5);
+        }).on('mouseleave', () => {
+          label.attr('class', 'opacity-0 pointer-events-none transition-opacity duration-150');
+          pinCircle.attr('stroke-width', 2.2);
+        });
+      });
+    }
+
+    function showCountryPopover(countryId, event) {
+      if (window.innerWidth < 768) {
+        hideCountryPopover();
+        return;
+      }
+      const padded = String(countryId).padStart(3, '0');
+      let data = COUNTRIES_DICT[padded] || COUNTRIES_DICT[String(countryId)];
+      
+      if (!data) {
+        data = {
+          iso2: "un",
+          name: "دولة ذات سيادة معترف بها",
+          cont: "المجتمع الدولي",
+          cap: "عاصمة وطنية",
+          desc: "دولة ذات سيادة تظهر على خريطة العالم السياسية وتخضع للمواثيق الدولية."
+        };
+      }
+
+      const img = document.getElementById('pop-flag-img');
+      const fallback = document.getElementById('pop-flag-fallback');
+      
+      if (data.iso2 && data.iso2 !== "un") {
+        img.src = 'https://flagcdn.com/w80/' + data.iso2.toLowerCase() + '.png';
+        img.style.display = 'block';
+        fallback.classList.add('hidden');
+      } else {
+        img.style.display = 'none';
+        fallback.classList.remove('hidden');
+      }
+
+      document.getElementById('pop-name').innerText = data.name;
+      document.getElementById('pop-continent').innerText = data.cont;
+      document.getElementById('pop-capital').innerText = 'العاصمة: ' + data.cap;
+      document.getElementById('pop-brief').innerText = data.desc;
+
+      const pop = document.getElementById('country-popover');
+      pop.classList.remove('hidden');
+      positionCountryPopover(event);
+    }
+
+    function positionCountryPopover(event) {
+      const pop = document.getElementById('country-popover');
+      const wrapper = document.getElementById('mapWrapper').getBoundingClientRect();
+      const clientX = (event.touches && event.touches[0] ? event.touches[0].clientX : event.clientX) || 0;
+      const clientY = (event.touches && event.touches[0] ? event.touches[0].clientY : event.clientY) || 0;
+      const x = clientX - wrapper.left;
+      const y = clientY - wrapper.top;
+
+      pop.style.left = Math.min(Math.max(x + 15, 10), wrapper.width - 290) + 'px';
+      pop.style.top = Math.max(Math.min(y - 140, wrapper.height - 190), 15) + 'px';
+    }
+
+    function hideCountryPopover() {
+      document.getElementById('country-popover').classList.add('hidden');
+    }
+
+    function selectCountry(countryId) {
+      const padded = String(countryId).padStart(3, '0');
+      let data = COUNTRIES_DICT[padded] || COUNTRIES_DICT[String(countryId)];
+      if (!data) return;
+
+      const card = document.getElementById('country-detail-card');
+      card.classList.remove('hidden');
+
+      document.getElementById('card-flag-img').src = 'https://flagcdn.com/w160/' + data.iso2.toLowerCase() + '.png';
+      document.getElementById('card-continent-badge').innerText = data.cont;
+      document.getElementById('card-capital-text').innerText = 'العاصمة: ' + data.cap;
+      document.getElementById('card-country-name').innerText = data.name;
+      document.getElementById('card-country-desc').innerText = data.desc;
+
+      const mapsQuery = encodeURIComponent(data.name);
+      document.getElementById('btn-google-maps').href = 'https://www.google.com/maps/search/?api=1&query=' + mapsQuery;
+      document.getElementById('btn-google-earth').href = 'https://earth.google.com/web/search/' + mapsQuery;
+
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function closeCountryCard() {
+      document.getElementById('country-detail-card').classList.add('hidden');
+    }
+
+    function focusOnFeature(featId) {
+      const feat = FEATURES.find(f => f.id === featId);
+      if (feat) {
+        selectFeature(feat);
+        setContinent(feat.cont);
+      }
+    }
+
+    function selectFeature(feat) {
+      currentSelectedFeat = feat;
+      const card = document.getElementById('feature-detail-card');
+      card.classList.remove('hidden');
+
+      const catLabel = feat.cat === 'mountain' ? 'جبال شاهقة' : feat.cat === 'plateau' ? 'هضبة كبرى' : feat.cat === 'river' ? 'نهر وسهول فيضية' : 'مضيق استراتيجي';
+      document.getElementById('feat-cat-badge').innerText = catLabel;
+      document.getElementById('feat-continent-text').innerText = feat.cont;
+      document.getElementById('feat-title').innerText = feat.name;
+      document.getElementById('feat-desc').innerText = feat.desc;
+
+      const detailsList = document.getElementById('feat-details-list');
+      detailsList.innerHTML = '';
+      feat.details.forEach(d => {
+        const div = document.createElement('div');
+        div.className = 'p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs font-semibold text-slate-700 flex items-start gap-2';
+        div.innerHTML = '<span class="text-emerald-600 font-bold">✓</span> <span>' + d + '</span>';
+        detailsList.appendChild(div);
+      });
+
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function closeFeatureCard() {
+      document.getElementById('feature-detail-card').classList.add('hidden');
+    }
+
+    function setContinent(contId) {
+      currentContinent = contId;
+      document.querySelectorAll('.cont-btn').forEach(b => {
+        b.className = 'cont-btn px-2 py-1 rounded-lg text-xs font-bold bg-white/5 text-slate-300 hover:bg-white/20';
+      });
+      const activeBtn = document.getElementById('btn-' + contId);
+      if (activeBtn) activeBtn.className = 'cont-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-white/25 text-white shadow-xs';
+
+      const svg = document.getElementById('realWorldSvg');
+      const viewBoxes = {
+        all: '0 0 1000 520',
+        asia: '450 40 460 380',
+        africa: '380 160 320 360',
+        europe: '380 40 280 260',
+        north_america: '80 30 360 320',
+        south_america: '200 240 260 360',
+        australia: '700 280 250 260'
+      };
+
+      svg.setAttribute('viewBox', viewBoxes[contId] || '0 0 1000 520');
+      updateView();
+    }
+
+    function readAloud() {
+      if (!currentSelectedFeat || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(currentSelectedFeat.name + '. ' + currentSelectedFeat.desc);
+      u.lang = 'ar-SA';
+      window.speechSynthesis.speak(u);
+    }
+
+    renderAccurateRivers();
+    renderClimatesOverlay();
+    renderClimatesLegend();
+    renderGraticules();
+
+    d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(world => {
+      const countries = topojson.feature(world, world.objects.countries).features;
+      const g = d3.select('#earth-countries-layer');
+      
+      g.selectAll('path')
+        .data(countries)
+        .enter()
+        .append('path')
+        .attr('d', path)
+        .attr('fill', '#F1EDE4')
+        .attr('stroke', '#CBD5E1')
+        .attr('stroke-width', 0.8)
+        .attr('class', 'country-path cursor-pointer')
+        .on('mouseenter', function(event, d) {
+          if (currentTab !== 'blank') return;
+          d3.select(this).attr('fill', '#DBEAFE').attr('stroke', '#2563EB').attr('stroke-width', 1.8);
+          showCountryPopover(d.id, event);
+        })
+        .on('mousemove', function(event, d) {
+          if (currentTab !== 'blank') return;
+          positionCountryPopover(event);
+        })
+        .on('mouseleave', function(event, d) {
+          if (currentTab !== 'blank') return;
+          d3.select(this).attr('fill', '#F1EDE4').attr('stroke', '#CBD5E1').attr('stroke-width', 0.8);
+          hideCountryPopover();
+        })
+        .on('click', function(event, d) {
+          if (currentTab !== 'blank') return;
+          selectCountry(d.id);
+        })
+        .on('touchstart', function(event, d) {
+          if (currentTab !== 'blank') return;
+          hideCountryPopover();
+          selectCountry(d.id);
+        });
+
+      updateView();
+    }).catch(err => {
+      console.warn('Network issue fetching world topojson, fallback active:', err);
+      updateView();
+    });
+  </script>
+</body>
+</html>
